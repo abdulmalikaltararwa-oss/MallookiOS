@@ -3,17 +3,38 @@ name: Build & Release MallookiOS
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Bump patch version
+        run: |
+          $json = Get-Content package.json | ConvertFrom-Json
+          $version = $json.version -split '\.'
+          $version[2] = [int]$version[2] + 1
+          $json.version = $version -join '.'
+          $json | ConvertTo-Json -Depth 10 | Set-Content package.json
+          Write-Host "New version: $($json.version)"
+
+      - name: Commit version bump
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add package.json
+          git commit -m "v$(( Get-Content package.json | ConvertFrom-Json ).version) [skip ci]"
+          git push
+
       - run: npm install
+
       - name: Build & Release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
