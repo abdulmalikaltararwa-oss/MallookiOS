@@ -21,12 +21,3 @@ jobs:
           name: MallookiOS-Setup
           path: dist/*.exe
           retention-days: 90
-```
-
-Also go to `package.json` → pencil icon → change the build script line from:
-```
-"build:win": "electron-builder --win --publish always"
-```
-to:
-```
-"build:win": "electron-builder --win --publish never"
