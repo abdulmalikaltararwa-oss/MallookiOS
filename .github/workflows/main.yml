@@ -1,4 +1,4 @@
-name: Build & Release MallookiOS
+name: Build MallookiOS
 
 on:
   push:
@@ -9,15 +9,24 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - run: npm install
+      - name: Build
+        run: npx electron-builder --win --publish never
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: MallookiOS-Setup
+          path: dist/*.exe
+          retention-days: 90
+```
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build & publish release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run build:win
+Also go to `package.json` → pencil icon → change the build script line from:
+```
+"build:win": "electron-builder --win --publish always"
+```
+to:
+```
+"build:win": "electron-builder --win --publish never"
