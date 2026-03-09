@@ -1,0 +1,32 @@
+{
+  "name": "mallooki-os",
+  "version": "1.0.0",
+  "description": "MallookiOS — Personal Life Dashboard",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win --publish always"
+  },
+  "build": {
+    "appId": "com.mallooki.os",
+    "productName": "MallookiOS",
+    "directories": { "output": "dist" },
+    "publish": {
+      "provider": "github",
+      "owner": "abdulmalikaitararwa-oss",
+      "repo": "MallookiOS"
+    },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.13.0",
+    "electron-updater": "^6.1.8"
+  }
+}
