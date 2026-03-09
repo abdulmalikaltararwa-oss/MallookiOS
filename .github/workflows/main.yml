@@ -1,4 +1,4 @@
-name: Build MallookiOS
+name: Build & Release MallookiOS
 
 on:
   push:
@@ -13,11 +13,8 @@ jobs:
         with:
           node-version: '20'
       - run: npm install
-      - name: Build
-        run: npx electron-builder --win --publish never
-      - name: Upload EXE
-        uses: actions/upload-artifact@v4
-        with:
-          name: MallookiOS-Setup
-          path: dist/*.exe
-          retention-days: 90
+      - name: Build & Release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npm run build:win
+```
