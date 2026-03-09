@@ -24,9 +24,11 @@
       "allowToChangeInstallationDirectory": true
     }
   },
+  "dependencies": {
+    "electron-updater": "^6.1.8"
+  },
   "devDependencies": {
     "electron": "^29.0.0",
-    "electron-builder": "^24.13.0",
-    "electron-updater": "^6.1.8"
+    "electron-builder": "^24.13.0"
   }
 }
