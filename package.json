@@ -13,7 +13,7 @@
     "directories": { "output": "dist" },
     "publish": {
       "provider": "github",
-      "owner": "abdulmalikaitararwa-oss",
+      "owner": "abdulmalikaltararwa-oss",
       "repo": "MallookiOS"
     },
     "win": {
