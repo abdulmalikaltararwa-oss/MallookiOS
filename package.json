@@ -1,45 +1,45 @@
 {
-  "name": "mallooki-os",
-  "version": "1.0.12",
-  "description": "MallookiOS — Personal Life Dashboard",
-  "author": "Mallooki",
-  "main": "src/main.js",
-  "scripts": {
-    "start": "electron .",
-    "build:win": "electron-builder --win --publish always"
-  },
-  "build": {
-    "appId": "com.mallooki.os",
-    "productName": "MallookiOS",
-    "directories": {
-      "output": "dist"
-    },
-    "publish": {
-      "provider": "github",
-      "owner": "abdulmalikaltararwa-oss",
-      "repo": "MallookiOS"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
-    }
-  },
-  "dependencies": {
-    "electron-log": "^5.4.0",
-    "electron-updater": "^6.1.8"
-  },
-  "devDependencies": {
-    "electron": "^29.0.0",
-    "electron-builder": "^24.13.0"
-  }
+    "name":  "mallooki-os",
+    "version":  "1.0.13",
+    "description":  "MallookiOS — Personal Life Dashboard",
+    "author":  "Mallooki",
+    "main":  "src/main.js",
+    "scripts":  {
+                    "start":  "electron .",
+                    "build:win":  "electron-builder --win --publish always"
+                },
+    "build":  {
+                  "appId":  "com.mallooki.os",
+                  "productName":  "MallookiOS",
+                  "directories":  {
+                                      "output":  "dist"
+                                  },
+                  "publish":  {
+                                  "provider":  "github",
+                                  "owner":  "abdulmalikaltararwa-oss",
+                                  "repo":  "MallookiOS"
+                              },
+                  "win":  {
+                              "target":  [
+                                             {
+                                                 "target":  "nsis",
+                                                 "arch":  [
+                                                              "x64"
+                                                          ]
+                                             }
+                                         ]
+                          },
+                  "nsis":  {
+                               "oneClick":  false,
+                               "allowToChangeInstallationDirectory":  true
+                           }
+              },
+    "dependencies":  {
+                         "electron-log":  "^5.4.0",
+                         "electron-updater":  "^6.1.8"
+                     },
+    "devDependencies":  {
+                            "electron":  "^29.0.0",
+                            "electron-builder":  "^24.13.0"
+                        }
 }
