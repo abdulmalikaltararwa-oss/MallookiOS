@@ -1,9 +1,11 @@
 name: Build & Release MallookiOS
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (example: 1.0.13)'
+        required: true
 
 jobs:
   build:
@@ -16,6 +18,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Set version
+        shell: powershell
+        run: |
+          $json = Get-Content package.json | ConvertFrom-Json
+          $json.version = "${{ github.event.inputs.version }}"
+          $json | ConvertTo-Json -Depth 10 | Set-Content package.json
+
+      - name: Commit version bump
+        shell: powershell
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add package.json
+          git commit -m "release v${{ github.event.inputs.version }}"
+          git push
 
       - run: npm install
 
