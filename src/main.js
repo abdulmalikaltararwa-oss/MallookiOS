@@ -1,9 +1,17 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain} = require('electron');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
 const path = require('path');
 const fs = require('fs');
 
+
+let mainWindow = null;
+
+function sendUpdater(event, payload = {}) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('updater:event', { event, ...payload });
+  }
+}
 // ── Auto-updater ──────────────────────────────────────────────
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -13,40 +21,42 @@ autoUpdater.autoInstallOnAppQuit = true;
 
 autoUpdater.on('checking-for-update', () => {
   log.info('Checking for update');
+  sendUpdater('checking');
 });
 
 autoUpdater.on('update-available', (info) => {
   log.info('Update available', info);
+  sendUpdater('available', { version: info.version });
 });
 
 autoUpdater.on('update-not-available', (info) => {
   log.info('No update available', info);
+  sendUpdater('not-available', { version: info.version });
 });
 
 autoUpdater.on('error', (err) => {
   log.error('Updater error', err);
+  sendUpdater('error', { message: err.message || 'Unknown updater error' });
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
   log.info(`Download progress: ${progressObj.percent}%`);
+  sendUpdater('progress', { percent: progressObj.percent });
 });
 
-autoUpdater.on('update-downloaded', () => {
+autoUpdater.on('update-downloaded', (info) => {
   log.info('Update downloaded');
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Update Ready',
-    message: 'A new version of MallookiOS is ready. Install now or next time you close the app.',
-    buttons: ['Install Now', 'Later']
-  }).then(({ response }) => {
-    if (response === 0) autoUpdater.quitAndInstall();
-  });
+  sendUpdater('downloaded', { version: info.version });
+});
+
+ipcMain.handle('updater:install', async () => {
+  autoUpdater.quitAndInstall();
 });
 
 const CACHE_FILE = path.join(app.getPath('userData'), 'cache.json');
 
 function createWindow() {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1300,
     height: 860,
     minWidth: 950,
@@ -62,10 +72,10 @@ function createWindow() {
     show: false
   });
 
-  win.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-  win.once('ready-to-show', () => {
-    win.show();
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
     autoUpdater.checkForUpdatesAndNotify();
   });
 }
