@@ -1,8 +1,9 @@
 const { app, BrowserWindow, ipcMain, dialog} = require('electron');
 const { autoUpdater } = require('electron-updater');
 const log = require('electron-log');
-const path = require('path');
+const path = require('node:path');
 const fs = require('fs');
+const DEEP_LINK_PROTOCOL = 'mallookios'
 
 
 let mainWindow = null;
@@ -79,6 +80,55 @@ function createWindow() {
     autoUpdater.checkForUpdates();
   });
 }
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(
+      DEEP_LINK_PROTOCOL,
+      process.execPath,
+      [path.resolve(process.argv[1])]
+    )
+  }
+} else {
+  app.setAsDefaultProtocolClient(DEEP_LINK_PROTOCOL)
+}
+
+function forwardDeepLink(url) {
+  if (!url) return
+
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+    mainWindow.webContents.send('auth:deep-link', url)
+  }
+}
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (_event, commandLine) => {
+    const deepLink = commandLine.find(arg =>
+      typeof arg === 'string' && arg.startsWith(`${DEEP_LINK_PROTOCOL}://`)
+    )
+
+    if (deepLink) {
+      forwardDeepLink(deepLink)
+    }
+
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+}
+
+app.on('open-url', (event, url) => {
+  event.preventDefault()
+  forwardDeepLink(url)
+})
+
 app.whenReady().then(createWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
