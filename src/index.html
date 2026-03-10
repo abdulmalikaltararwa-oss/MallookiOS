@@ -333,7 +333,7 @@ main{flex:1; padding:26px 44px 60px;}
 <!-- ══ AUTH SCREEN ══ -->
 <div id="authScreen">
   <div class="auth-box">
-    <h1>Life OS</h1>
+    <h1>Mallooki OS</h1>
     <div class="auth-sub">Sign in to sync across devices</div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="setAuthMode('login',this)">Sign In</button>
@@ -358,7 +358,7 @@ main{flex:1; padding:26px 44px 60px;}
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-title">
-      <h1 id="appTitle" contenteditable="true" spellcheck="false">Life OS</h1>
+      <h1 id="appTitle" contenteditable="true" spellcheck="false">Mallooki OS</h1>
       <div class="sub" id="appSub" contenteditable="true" spellcheck="false">Kuwait · Fall 2026</div>
     </div>
     <div class="hero-right">
@@ -611,7 +611,7 @@ async function signOut() {
 
 /* ══ DEFAULT STATE ══ */
 const DS = {
-  appTitle:'Life OS', appSub:'Kuwait · Fall 2026', heroImg:'',
+  appTitle:'Mallooki OS', appSub:'Kuwait · Fall 2026', heroImg:'',
   quote:{ text:'The mind is not a vessel to be filled, but a fire to be kindled.', author:'— Plutarch' },
   cardioTarget:'30 min cardio — run, walk, or cycle',
   habits:[
@@ -705,7 +705,7 @@ async function saveToSupabase() {
   // Always save to local cache first
   try { await window.api.cacheSave(json); } catch(e){}
 
-  const { error } = await sb.from('life_os_data').upsert({
+  const { error } = await sb.from('app_data').upsert({
     user_id: currentUser.id,
     data: S,
     updated_at: new Date().toISOString()
@@ -725,7 +725,7 @@ async function saveToSupabase() {
 async function loadFromSupabase() {
   if (!currentUser) return false;
   const { data, error } = await sb
-    .from('life_os_data')
+    .from('app_data')
     .select('data')
     .eq('user_id', currentUser.id)
     .single();
