@@ -32,6 +32,7 @@
                   "nsis":  {
                                "oneClick":  false,
                                "allowToChangeInstallationDirectory":  true
+                               "disableWebInstaller": true
                            }
               },
     "dependencies":  {
