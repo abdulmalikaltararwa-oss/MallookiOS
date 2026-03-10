@@ -13,3 +13,11 @@ contextBridge.exposeInMainWorld('updater', {
   },
   install: () => ipcRenderer.invoke('updater:install')
 });
+
+contextBridge.exposeInMainWorld('authBridge', {
+  onDeepLink: (callback) => {
+    ipcRenderer.removeAllListeners('auth:deep-link');
+    ipcRenderer.on('auth:deep-link', (_event, url) => callback(url));
+  }
+});
+
