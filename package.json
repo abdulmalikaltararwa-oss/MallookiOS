@@ -2,6 +2,7 @@
   "name": "mallooki-os",
   "version": "1.0.2",
   "description": "MallookiOS — Personal Life Dashboard",
+  "author": "Mallooki",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
@@ -41,6 +42,6 @@
     "electron-builder": "^24.13.0"
   },
   "bundledDependencies": [
-    "electron-updater"
+    "electron-updater": "^4.0.0"
   ]
 }
