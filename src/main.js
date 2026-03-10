@@ -50,7 +50,7 @@ autoUpdater.on('update-downloaded', (info) => {
 });
 
 ipcMain.handle('updater:install', async () => {
-  autoUpdater.quitAndInstall();
+  autoUpdater.quitAndInstall(true, true);
 });
 
 const CACHE_FILE = path.join(app.getPath('userData'), 'cache.json');
