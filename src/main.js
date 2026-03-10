@@ -1,16 +1,38 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
+const log = require('electron-log');
 const path = require('path');
-const fs   = require('fs');
+const fs = require('fs');
 
 // ── Auto-updater ──────────────────────────────────────────────
-// Checks GitHub Releases on every startup.
-// If a newer version exists it downloads silently in background.
-// When done, shows a prompt: "Install Now" or "Later".
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
+autoUpdater.on('checking-for-update', () => {
+  log.info('Checking for update');
+});
+
+autoUpdater.on('update-available', (info) => {
+  log.info('Update available', info);
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  log.info('No update available', info);
+});
+
+autoUpdater.on('error', (err) => {
+  log.error('Updater error', err);
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  log.info(`Download progress: ${progressObj.percent}%`);
+});
+
 autoUpdater.on('update-downloaded', () => {
+  log.info('Update downloaded');
   dialog.showMessageBox({
     type: 'info',
     title: 'Update Ready',
@@ -25,7 +47,10 @@ const CACHE_FILE = path.join(app.getPath('userData'), 'cache.json');
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1300, height: 860, minWidth: 950, minHeight: 650,
+    width: 1300,
+    height: 860,
+    minWidth: 950,
+    minHeight: 650,
     title: 'MallookiOS',
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
     backgroundColor: '#1a0a0f',
@@ -36,14 +61,14 @@ function createWindow() {
     },
     show: false
   });
+
   win.loadFile(path.join(__dirname, 'index.html'));
+
   win.once('ready-to-show', () => {
     win.show();
-    // Check for updates after window is shown
     autoUpdater.checkForUpdatesAndNotify();
   });
 }
-
 app.whenReady().then(createWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
