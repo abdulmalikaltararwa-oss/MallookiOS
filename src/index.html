@@ -312,6 +312,67 @@ main{flex:1; padding:26px 44px 60px;}
 #toast{position:fixed; bottom:20px; right:20px; z-index:300; background:linear-gradient(135deg,rgba(139,50,82,0.92),rgba(45,16,25,0.96)); border:1px solid var(--border-lt); border-radius:10px; padding:9px 15px; font-size:0.76rem; color:var(--mist); opacity:0; pointer-events:none; transition:opacity 0.25s; box-shadow:0 8px 30px rgba(0,0,0,0.5);}
 #toast.show{opacity:1;}
 
+.update-card{
+  position:fixed;
+  right:20px;
+  top:20px;
+  z-index:350;
+  width:320px;
+  background:linear-gradient(145deg,rgba(45,16,25,0.94),rgba(26,10,15,0.98));
+  border:1px solid var(--border-lt);
+  border-radius:14px;
+  padding:14px 15px;
+  box-shadow:0 18px 45px rgba(0,0,0,0.45);
+  backdrop-filter:blur(14px);
+}
+.update-card.hidden{display:none;}
+.update-kicker{
+  font-size:0.58rem;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--blush);
+  font-family:'DM Mono',monospace;
+  margin-bottom:6px;
+}
+.update-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;
+  color:var(--cream);
+}
+.update-sub{
+  font-size:0.72rem;
+  color:var(--muted-lt);
+  margin-top:4px;
+  line-height:1.5;
+}
+.update-progress-wrap.hidden,
+.update-actions.hidden{display:none;}
+.update-progress-bar{
+  height:6px;
+  background:rgba(192,96,122,0.12);
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:12px;
+}
+.update-progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--rose),var(--blush),var(--gold-lt));
+  transition:width 0.2s ease;
+}
+.update-progress-text{
+  margin-top:7px;
+  font-size:0.68rem;
+  color:var(--gold-lt);
+  font-family:'DM Mono',monospace;
+}
+.update-actions{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  margin-top:14px;
+}
+
 /* Status bar */
 .sbar{display:flex; align-items:center; gap:8px; padding:7px 44px; background:rgba(26,10,15,0.5); border-top:1px solid var(--border); font-size:0.62rem; color:var(--muted);}
 .sbar span:first-child{margin-right:auto;}
@@ -540,6 +601,25 @@ main{flex:1; padding:26px 44px 60px;}
 </div>
 <div id="toast"></div>
 
+<div id="updateCard" class="update-card hidden">
+  <div class="update-kicker">System Update</div>
+  <div id="updateTitle" class="update-title">Checking for updates…</div>
+  <div id="updateSub" class="update-sub"></div>
+
+  <div id="updateProgressWrap" class="update-progress-wrap hidden">
+    <div class="update-progress-bar">
+      <div id="updateProgressFill" class="update-progress-fill"></div>
+    </div>
+    <div id="updateProgressText" class="update-progress-text">0%</div>
+  </div>
+
+  <div id="updateActions" class="update-actions hidden">
+    <button class="btn btn-g" onclick="dismissUpdateCard()">Later</button>
+    <button class="btn btn-p" onclick="installUpdateNow()">Install Now</button>
+  </div>
+</div>
+
+  
 <script>
 'use strict';
 
@@ -748,6 +828,7 @@ async function loadFromSupabase() {
 }
 
 /* ══ UTILS ══ */
+
 const DAY_SHORT=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const ALL_CATS=['Academic','Career','Health','Personal','Creative'];
 const PALS=['linear-gradient(145deg,#3d0f1c,#1a0a0f)','linear-gradient(145deg,#2d1019,#0f060a)','linear-gradient(145deg,#1e0d28,#0a0614)','linear-gradient(145deg,#0d1a2d,#070d18)','linear-gradient(145deg,#0d2420,#060f0d)'];
@@ -763,7 +844,81 @@ function weekDays(){
 function calcStreak(obj){let n=0,d=new Date();while(obj[dStr(d)]){n++;d.setDate(d.getDate()-1);}return n;}
 let toastT;
 function toast(msg,ms=2500){const el=eid('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),ms);}
+function showUpdateCard() {
+  eid('updateCard').classList.remove('hidden');
+}
 
+function hideUpdateCard() {
+  eid('updateCard').classList.add('hidden');
+}
+
+function dismissUpdateCard() {
+  hideUpdateCard();
+}
+
+async function installUpdateNow() {
+  if (window.updater) {
+    await window.updater.install();
+  }
+}
+
+if (window.updater) {
+  window.updater.onEvent((msg) => {
+    const title = eid('updateTitle');
+    const sub = eid('updateSub');
+    const wrap = eid('updateProgressWrap');
+    const fill = eid('updateProgressFill');
+    const text = eid('updateProgressText');
+    const actions = eid('updateActions');
+
+    showUpdateCard();
+
+    if (msg.event === 'checking') {
+      title.textContent = 'Checking for updates…';
+      sub.textContent = 'Looking for a newer version of MallookiOS.';
+      wrap.classList.add('hidden');
+      actions.classList.add('hidden');
+    }
+
+    if (msg.event === 'available') {
+      title.textContent = `Update ${msg.version} available`;
+      sub.textContent = 'Downloading in the background.';
+      wrap.classList.remove('hidden');
+      actions.classList.add('hidden');
+      fill.style.width = '0%';
+      text.textContent = '0%';
+    }
+
+    if (msg.event === 'progress') {
+      const pct = Math.round(msg.percent || 0);
+      title.textContent = 'Downloading update…';
+      sub.textContent = 'MallookiOS is updating in the background.';
+      wrap.classList.remove('hidden');
+      actions.classList.add('hidden');
+      fill.style.width = pct + '%';
+      text.textContent = pct + '% downloaded';
+    }
+
+    if (msg.event === 'downloaded') {
+      title.textContent = `Update ${msg.version} ready`;
+      sub.textContent = 'Restart now to install the latest version.';
+      wrap.classList.add('hidden');
+      actions.classList.remove('hidden');
+    }
+
+    if (msg.event === 'not-available') {
+      hideUpdateCard();
+    }
+
+    if (msg.event === 'error') {
+      title.textContent = 'Update check failed';
+      sub.textContent = msg.message || 'Something went wrong while checking for updates.';
+      wrap.classList.add('hidden');
+      actions.classList.add('hidden');
+    }
+  });
+}
+  
 /* ══ HERO ══ */
 function uploadHero(input){
   const f=input.files[0];if(!f)return;
