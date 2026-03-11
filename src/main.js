@@ -7,7 +7,7 @@ const DEEP_LINK_PROTOCOL = 'mallookios'
 
 
 let mainWindow = null;
-
+let pendingDeepLink = null;
 function sendUpdater(event, payload = {}) {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('updater:event', { event, ...payload });
@@ -54,6 +54,12 @@ ipcMain.handle('updater:install', async () => {
   autoUpdater.quitAndInstall(true, true);
 });
 
+function extractDeepLinkFromArgv(argv = []) {
+  return argv.find(arg =>
+    typeof arg === 'string' && arg.startsWith(`${DEEP_LINK_PROTOCOL}://`)
+  ) || null;
+}
+
 const CACHE_FILE = path.join(app.getPath('userData'), 'cache.json');
 
 function createWindow() {
@@ -78,6 +84,11 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
     autoUpdater.checkForUpdates();
+
+    if (pendingDeepLink) {
+      forwardDeepLink(pendingDeepLink);
+      pendingDeepLink = null;
+    }
   });
 }
 
@@ -94,27 +105,33 @@ if (process.defaultApp) {
 }
 
 function forwardDeepLink(url) {
-  if (!url) return
+  if (!url) return;
 
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) mainWindow.restore()
-    mainWindow.focus()
-    mainWindow.webContents.send('auth:deep-link', url)
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+
+    if (mainWindow.webContents.isLoading()) {
+      mainWindow.webContents.once('did-finish-load', () => {
+        mainWindow.webContents.send('auth:deep-link', url);
+      });
+    } else {
+      mainWindow.webContents.send('auth:deep-link', url);
+    }
   }
 }
-
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
   app.quit()
 } else {
   app.on('second-instance', (_event, commandLine) => {
-    const deepLink = commandLine.find(arg =>
-      typeof arg === 'string' && arg.startsWith(`${DEEP_LINK_PROTOCOL}://`)
-    )
+      const deepLink = extractDeepLinkFromArgv(commandLine);
+    
 
     if (deepLink) {
-      forwardDeepLink(deepLink)
+      pendingDeepLink = deepLink;
+      forwardDeepLink(deepLink);
     }
 
     if (mainWindow) {
@@ -126,8 +143,10 @@ if (!gotTheLock) {
 
 app.on('open-url', (event, url) => {
   event.preventDefault()
+  pendingDeepLink = url;
   forwardDeepLink(url)
 })
+pendingDeepLink = extractDeepLinkFromArgv(process.argv);
 
 app.whenReady().then(createWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
