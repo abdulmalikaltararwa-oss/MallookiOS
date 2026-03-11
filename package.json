@@ -20,7 +20,7 @@
                                   "owner":  "abdulmalikaltararwa-oss",
                                   "repo":  "MallookiOS",
                                   "releaseType":  "draft",
-                                  "tagNamePrefix":  "v"
+                                  "vPrefixedTagName": true
                               },
                   "win":  {
                               "target":  [
