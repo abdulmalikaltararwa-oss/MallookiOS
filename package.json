@@ -1,14 +1,14 @@
 {
     "name":  "mallooki-os",
-    "version":  "1.0.15",
+    "version":  "1.0.160",
     "description":  "MallookiOS — Personal Life Dashboard",
     "author":  "Mallooki",
     "main":  "src/main.js",
-    "scripts": {
-  "start": "electron .",
-  "build:win": "electron-builder --win never",
-  "release:win": "electron-builder --win --publish always"
-},
+    "scripts":  {
+                    "start":  "electron .",
+                    "build:win":  "electron-builder --win never",
+                    "release:win":  "electron-builder --win --publish always"
+                },
     "build":  {
                   "appId":  "com.mallooki.os",
                   "productName":  "MallookiOS",
