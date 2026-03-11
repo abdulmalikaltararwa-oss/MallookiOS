@@ -621,7 +621,7 @@ main{flex:1; padding:26px 44px 60px;}
 </div>
 
 <script src="./renderer/auth.js"></script>  
-  
+<script src="./renderer/sync.js"></script>  
 <script>
 'use strict';
 
@@ -698,69 +698,6 @@ function deepMerge(base,over){
     else r[k]=over[k];
   }
   return r;
-}
-
-/* ══ SYNC ══ */
-function setSyncStatus(status) {
-  const dot = eid('syncDot');
-  dot.className = 'sync-dot ' + status;
-  dot.title = {synced:'Synced',syncing:'Syncing…',offline:'Offline — changes saved locally'}[status] || '';
-}
-
-let saveTimer;
-function scheduleSave() {
-  setSyncStatus('syncing');
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => saveToSupabase(), 1200);
-}
-
-async function saveToSupabase() {
-  if (!currentUser) return;
-  setSyncStatus('syncing');
-  const json = JSON.stringify(S);
-  // Always save to local cache first
-  try { await window.api.cacheSave(json); } catch(e){}
-
-  const { error } = await sb.from('app_data').upsert({
-    user_id: currentUser.id,
-    data: S,
-    updated_at: new Date().toISOString()
-  }, { onConflict: 'user_id' });
-
-  if (error) {
-    setSyncStatus('offline');
-    eid('saveInd').textContent = 'Saved locally (offline)';
-    setTimeout(() => { eid('saveInd').textContent = ''; }, 2500);
-  } else {
-    setSyncStatus('synced');
-    eid('saveInd').textContent = 'Synced';
-    setTimeout(() => { eid('saveInd').textContent = ''; }, 2000);
-  }
-}
-
-async function loadFromSupabase() {
-  if (!currentUser) return false;
-  const { data, error } = await sb
-    .from('app_data')
-    .select('data')
-    .eq('user_id', currentUser.id)
-    .single();
-
-  if (error || !data) {
-    // Try local cache
-    try {
-      const cache = await window.api.cacheLoad();
-      if (cache.ok && cache.data) {
-        S = deepMerge(DS, JSON.parse(cache.data));
-        setSyncStatus('offline');
-        return true;
-      }
-    } catch(e){}
-    return false;
-  }
-  S = deepMerge(DS, data.data);
-  setSyncStatus('synced');
-  return true;
 }
 
 /* ══ UTILS ══ */
