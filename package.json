@@ -19,9 +19,8 @@
                                   "provider":  "github",
                                   "owner":  "abdulmalikaltararwa-oss",
                                   "repo":  "MallookiOS",
-                                  "releaseType": "draft",
-                                  "tagNamePrefix": "v"
-                      
+                                  "releaseType":  "draft",
+                                  "tagNamePrefix":  "v"
                               },
                   "win":  {
                               "target":  [
