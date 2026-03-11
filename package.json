@@ -6,7 +6,7 @@
     "main":  "src/main.js",
     "scripts":  {
                     "start":  "electron .",
-                    "build:win":  "electron-builder --win never",
+                    "build:win": "electron-builder --win --publish never",
                     "release:win":  "electron-builder --win --publish always"
                 },
     "build":  {
