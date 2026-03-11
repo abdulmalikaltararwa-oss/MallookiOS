@@ -701,7 +701,24 @@ function deepMerge(base,over){
   return r;
 }
 
+function showUpdateCard() {
+  eid('updateCard').classList.remove('hidden');
+}
 
+function hideUpdateCard() {
+  eid('updateCard').classList.add('hidden');
+}
+
+function dismissUpdateCard() {
+  hideUpdateCard();
+}
+
+async function installUpdateNow() {
+  if (window.updater) {
+    await window.updater.install();
+  }
+}
+  
 if (window.updater) {
   window.updater.onEvent((msg) => {
     const title = eid('updateTitle');
