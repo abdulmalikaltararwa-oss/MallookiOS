@@ -143,28 +143,10 @@ function delBook(id){
 }
 
 function saveBook(){
-  const title = eid('bkT').value.trim();
-  if(!title) return;
-
-  S.books.push({
-    id: Date.now(),
-    title,
-    author: eid('bkA').value.trim(),
-    status: eid('bkS').value,
-    rating: parseInt(eid('bkR').value) || null,
-    notes: eid('bkN').value.trim(),
-    coverUrl: '',
-    currentPage: 0,
-    totalPages: 0,
-    chapterNotes: []
-  });
-
-  scheduleSave();
-  renderBooks();
-  closeModal('mBook');
-  toast(`"${title}" added`);
+  const title=eid('bkT').value.trim();if(!title)return;
+  S.books.push({id:Date.now(),title,author:eid('bkA').value.trim(),status:eid('bkS').value,rating:parseInt(eid('bkR').value)||null,notes:eid('bkN').value.trim(),coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]});
+  scheduleSave();renderBooks();closeModal('mBook');toast(`"${title}" added`);
 }
-
 /* ══ BOOK DETAILS ══ */
 function openBookDetails(id){
   activeBookId = id;
