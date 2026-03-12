@@ -691,7 +691,11 @@ const DS = {
     {id:10,title:'Animal Farm',author:'George Orwell',status:'unread',rating:null,notes:'',coverUrl:''},
     {id:11,title:'The Brothers Karamazov',author:'Fyodor Dostoevsky',status:'unread',rating:null,notes:'',coverUrl:''},
   ],
-  gymLog:{}, cardioLog:{}, notes:{}
+  gymLog:{},
+  cardioLog:{},
+  notes:{},
+  workoutHistory: [],
+  exerciseHistory: {}
 };
 
 let S = JSON.parse(JSON.stringify(DS));
