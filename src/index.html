@@ -252,7 +252,7 @@ main{flex:1; padding:26px 44px 60px;}
 .goal-dl-inp{font-family:'DM Mono',monospace; font-size:0.6rem; color:var(--muted);}
 .goal-pct-inp{font-family:'DM Mono',monospace; font-size:0.64rem; color:var(--blush); background:rgba(26,10,15,0.6); border:1px solid rgba(192,96,122,0.2); border-radius:5px; padding:1px 4px; width:44px; outline:none; text-align:center;}
 
-/* ══ GRAD SCHOOL ══ */
+/* ══ Placeholder ══ */
 .prog-filters{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;}
 .fpill{font-size:0.61rem; font-family:'DM Mono',monospace; letter-spacing:0.08em; text-transform:uppercase; padding:3px 10px; border-radius:20px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all 0.18s;}
 .fpill:hover,.fpill.active{background:rgba(192,96,122,0.15); color:var(--petal); border-color:var(--border-lt);}
@@ -506,19 +506,14 @@ main{flex:1; padding:26px 44px 60px;}
   </div>
 
   <!-- GRAD SCHOOL -->
-  <div id="panel-grad" class="panel">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="sec" style="margin:0">Applications <span class="lbl">Fall 2026</span></div>
-      <button class="btn btn-p" onclick="openModal('mProg')">+ Add Program</button>
-    </div>
-    <div class="prog-filters" id="progFilters">
-      <button class="fpill active" onclick="setProgF('all',this)">All</button>
-      <button class="fpill" onclick="setProgF('Wishlist',this)">Wishlist</button>
-      <button class="fpill" onclick="setProgF('Applied',this)">Applied</button>
-      <button class="fpill" onclick="setProgF('Pending',this)">Pending</button>
-      <button class="fpill" onclick="setProgF('Admitted',this)">Admitted</button>
-      <button class="fpill" onclick="setProgF('Rejected',this)">Rejected</button>
-    </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+  <div class="sec" style="margin:0">Projects <span class="lbl">Tracks & Focus Areas</span></div>
+  <button class="btn btn-p" onclick="openModal('mProg')">+ Add Project</button>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+  <div class="sec" style="margin:0">Projects <span class="lbl">Tracks & Focus Areas</span></div>
+  <button class="btn btn-p" onclick="openModal('mProg')">+ Add Project</button>
+  </div>
     <div class="progs-grid" id="progsGrid"></div>
   </div>
 
@@ -569,15 +564,21 @@ main{flex:1; padding:26px 44px 60px;}
 </div>
 <div class="modal-bg" id="mProg">
   <div class="modal">
-    <h2>Add Program</h2>
-    <div class="mf"><label>University</label><input id="pSchool" placeholder="e.g. Tufts University"></div>
-    <div class="mf"><label>Program</label><input id="pName" placeholder="e.g. MA Economics"></div>
-    <div class="mf"><label>Location</label><input id="pLoc" placeholder="e.g. Boston, MA"></div>
+    <h2>Add Project</h2>
+    <div class="mf"><label>Title</label><input id="pSchool" placeholder="e.g. Economics Applications"></div>
+    <div class="mf"><label>Type</label><input id="pName" placeholder="e.g. Academic Track"></div>
+    <div class="mf"><label>Context</label><input id="pLoc" placeholder="e.g. Fall 2026 / Personal / Career"></div>
     <div class="mf"><label>Status</label>
-      <select id="pStat"><option>Wishlist</option><option>Applied</option><option>Pending</option><option>Admitted</option><option>Rejected</option></select>
+      <select id="pStat">
+        <option>Wishlist</option>
+        <option>Applied</option>
+        <option>Pending</option>
+        <option>Admitted</option>
+        <option>Rejected</option>
+      </select>
     </div>
-    <div class="mf"><label>Deadline</label><input id="pDl" type="date"></div>
-    <div class="mf"><label>Notes</label><textarea id="pNotes" placeholder="Faculty, funding, fit…"></textarea></div>
+    <div class="mf"><label>Target Date</label><input id="pDl" type="date"></div>
+    <div class="mf"><label>Notes</label><textarea id="pNotes" placeholder="What this area is for, key tasks, next steps…"></textarea></div>
     <div class="modal-acts">
       <button class="btn btn-g" onclick="closeModal('mProg')">Cancel</button>
       <button class="btn btn-p" onclick="saveProg()">Save</button>
@@ -789,10 +790,6 @@ async function initApp(){
   setupInlineEdits();
   renderAll();
 }
-
-window.addEventListener('beforeunload', () => {
-  if (typeof saveToSupabase === 'function') saveToSupabase();
-});
 
 initApp();
 </script>
