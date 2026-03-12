@@ -850,10 +850,9 @@ const DS = {
   goals:[
     {id:1,text:"Get admitted to a top Economics Master's program",category:'Academic',deadline:'2026-05-01',progress:60,notes:'Quant-track programs'},
     {id:2,text:'Finish GCC metro urban economics paper',category:'Academic',deadline:'2025-12-15',progress:75,notes:''},
-    {id:3,text:'Build Aqarna MVP and launch beta in Kuwait',category:'Career',deadline:'2026-06-01',progress:30,notes:'Property data platform'},
-    {id:4,text:'Read 6 books this year',category:'Personal',deadline:'2026-08-01',progress:10,notes:''},
-    {id:5,text:'Gym consistently 3 months',category:'Health',deadline:'2026-03-31',progress:20,notes:''},
-    {id:6,text:'Complete psychological fiction short story',category:'Creative',deadline:'2026-04-01',progress:15,notes:'Control & conditioning'},
+    {id:3,text:'Read 6 books this year',category:'Personal',deadline:'2026-08-01',progress:10,notes:''},
+    {id:4,text:'Gym consistently 3 months',category:'Health',deadline:'2026-03-31',progress:20,notes:''},
+    {id:5,text:'Complete psychological fiction short story',category:'Creative',deadline:'2026-04-01',progress:15,notes:'Control & conditioning'},
   ],
   programs:[
     {id:1,school:'Tufts University',name:'MA Economics',location:'Medford, MA',status:'Wishlist',deadline:'',notes:'Strong urban & policy faculty'},
@@ -861,25 +860,19 @@ const DS = {
     {id:3,school:'NC State',name:'MA Economics',location:'Raleigh, NC',status:'Wishlist',deadline:'',notes:'Applied, transportation research'},
     {id:4,school:'University of Utah',name:'MA Economics',location:'Salt Lake City, UT',status:'Wishlist',deadline:'',notes:'PhD-prep, quant track'},
   ],
-  books:[
-    {id:1,title:'1984',author:'George Orwell',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:2,title:'The Blade Itself',author:'Joe Abercrombie',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:3,title:'The World as Will and Idea',author:'Arthur Schopenhauer',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:4,title:'Essays of Arthur Schopenhauer',author:'Arthur Schopenhauer',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:5,title:'Critique of Pure & Practical Reason',author:'Immanuel Kant',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:6,title:'Fundamental Principles of the Metaphysic of Morals',author:'Immanuel Kant',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:7,title:'Crime and Punishment',author:'Fyodor Dostoevsky',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:8,title:'The Prince',author:'Niccolò Machiavelli',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:9,title:'Moby Dick',author:'Herman Melville',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:10,title:'Animal Farm',author:'George Orwell',status:'unread',rating:null,notes:'',coverUrl:''},
-    {id:11,title:'The Brothers Karamazov',author:'Fyodor Dostoevsky',status:'unread',rating:null,notes:'',coverUrl:''},
-  ],
-  gymLog:{},
-  cardioLog:{},
-  notes:{},
-  workoutHistory: [],
-  exerciseHistory: {}
-};
+books:[
+  {id:1,title:'1984',author:'George Orwell',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:2,title:'The Blade Itself',author:'Joe Abercrombie',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:3,title:'The World as Will and Idea',author:'Arthur Schopenhauer',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:4,title:'Essays of Arthur Schopenhauer',author:'Arthur Schopenhauer',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:5,title:'Critique of Pure & Practical Reason',author:'Immanuel Kant',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:6,title:'Fundamental Principles of the Metaphysic of Morals',author:'Immanuel Kant',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:7,title:'Crime and Punishment',author:'Fyodor Dostoevsky',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:8,title:'The Prince',author:'Niccolò Machiavelli',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:9,title:'Moby Dick',author:'Herman Melville',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:10,title:'Animal Farm',author:'George Orwell',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+  {id:11,title:'The Brothers Karamazov',author:'Fyodor Dostoevsky',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
+],};
 
 let S = JSON.parse(JSON.stringify(DS));
 
