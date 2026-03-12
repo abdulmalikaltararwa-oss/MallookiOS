@@ -66,36 +66,41 @@ function prayerStreak(){
     all.forEach(d=>{if(prayers.every(h=>h.days&&h.days[d]))days[d]=true;});
     return calcStreak(days);
   }
-  const generic=hfind('prayer','salah','salat','صلاة','صلاه');
-  return streakOf(generic);
+  return streakOf(hfind('prayer','salah','salat','صلاة','صلاه'));
 }
 
-function setStreak(elId,show,val){
-  const el=eid(elId); if(!el)return;
-  const row=el.closest('.streak-row');
-  if(row)row.style.display=show?'flex':'none';
-  el.textContent=show?`${val}d`:'';
-}
+const STREAK_DEFS=[
+  {key:'prayer',label:'Prayer',val:()=>prayerStreak()},
+  {key:'cardio',label:'Cardio',val:()=>streakOf(hfind('cardio','walk','run','jog','cycle'))},
+  {key:'gym',label:'Gym',val:()=>streakOf(hfind('gym','lift','workout','training','weights'))},
+  {key:'read',label:'Reading',val:()=>streakOf(hfind('read','reading','book'))},
+  {key:'study',label:'Study',val:()=>streakOf(hfind('study','deep work','revision','research'))}
+];
 
 function updateStreaks(){
-  const p=S.streakPrefs||{};
-  setStreak('s-prayer',!!p.prayer,prayerStreak());
-  setStreak('s-cardio',p.cardio!==false,streakOf(hfind('cardio','walk','run','jog','cycle')));
-  setStreak('s-gym',p.gym!==false,streakOf(hfind('gym','lift','workout','training','weights')));
-  setStreak('s-read',p.read!==false,streakOf(hfind('read','reading','book')));
+  const p=S.streakPrefs||{},c=eid('streakList'); if(!c)return;
+  c.innerHTML='';
+  STREAK_DEFS.forEach(s=>{
+    if(p[s.key]===false)return;
+    const row=document.createElement('div');
+    row.className='streak-row';
+    row.innerHTML=`<span class="streak-lbl">${s.label}</span><span class="streak-val">${s.val()}d</span>`;
+    c.appendChild(row);
+  });
 }
 
 function openStreaks(){
   const p=S.streakPrefs||{};
-  eid('stPrayer').checked=!!p.prayer;
-  eid('stCardio').checked=p.cardio!==false;
-  eid('stGym').checked=p.gym!==false;
-  eid('stRead').checked=p.read!==false;
+  eid('st-prayer').checked=!!p.prayer;
+  eid('st-cardio').checked=p.cardio!==false;
+  eid('st-gym').checked=p.gym!==false;
+  eid('st-read').checked=p.read!==false;
+  eid('st-study').checked=p.study!==false;
   openModal('mStreaks');
 }
 
-function toggleStreakPref(k,v){
-  if(!S.streakPrefs)S.streakPrefs={prayer:false,cardio:true,gym:true,read:true};
+function toggleStreakOption(k,v){
+  if(!S.streakPrefs)S.streakPrefs={prayer:false,cardio:true,gym:true,read:true,study:true};
   S.streakPrefs[k]=v;
   scheduleSave();
   updateStreaks();
