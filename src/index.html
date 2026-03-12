@@ -293,6 +293,114 @@ main{flex:1; padding:26px 44px 60px;}
 .book-del{position:absolute; top:7px; right:7px; background:rgba(26,10,15,0.72); border:none; color:#e89090; cursor:pointer; border-radius:6px; padding:3px 5px; font-size:0.64rem; opacity:0; transition:opacity 0.15s;}
 .book-card:hover .book-del{opacity:1;}
 
+/* ══ BOOK DETAILS ══ */
+.book-detail-modal{
+  width:760px;
+  max-width:96vw;
+}
+
+.book-detail-grid{
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:16px;
+  margin-bottom:14px;
+}
+
+.book-detail-block{
+  background:rgba(45,16,25,0.36);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+}
+
+.book-detail-kicker{
+  font-size:0.56rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--blush);
+  font-family:'DM Mono',monospace;
+  margin-bottom:8px;
+}
+
+.book-progress-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.book-progress-bar{
+  height:8px;
+  background:rgba(192,96,122,0.10);
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:8px;
+}
+
+.book-progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--rose),var(--blush),var(--gold-lt));
+  transition:width 0.2s ease;
+}
+
+.book-progress-text{
+  margin-top:7px;
+  font-size:0.66rem;
+  color:var(--gold-lt);
+  font-family:'DM Mono',monospace;
+}
+
+.chapter-notes{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:10px;
+}
+
+.chapter-note-card{
+  background:rgba(26,10,15,0.42);
+  border:1px solid rgba(232,160,176,0.14);
+  border-radius:10px;
+  padding:10px;
+}
+
+.chapter-note-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.chapter-note-top .editable{
+  flex:1;
+  font-size:0.76rem;
+  color:var(--petal);
+}
+
+.chapter-note-del{
+  background:none;
+  border:none;
+  color:#e89090;
+  cursor:pointer;
+  font-size:0.7rem;
+  padding:2px 4px;
+}
+
+.book-detail-actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-top:14px;
+}
+
+@media(max-width:900px){
+  .book-detail-grid{
+    grid-template-columns:1fr;
+  }
+}
+  
 /* ══ MODALS ══ */
 .modal-bg{display:none; position:fixed; inset:0; background:rgba(26,10,15,0.86); backdrop-filter:blur(8px); z-index:200; align-items:center; justify-content:center;}
 .modal-bg.open{display:flex;}
@@ -598,6 +706,81 @@ main{flex:1; padding:26px 44px 60px;}
     </div>
   </div>
 </div>
+
+<div class="modal-bg" id="mBookDetails">
+  <div class="modal book-detail-modal">
+    <h2>Book Details</h2>
+
+    <div class="book-detail-grid">
+      <div class="book-detail-block">
+        <div class="book-detail-kicker">Book</div>
+
+        <div class="mf">
+          <label>Title</label>
+          <input id="bdTitle" placeholder="Book title" oninput="updateActiveBookField('title', this.value)">
+        </div>
+
+        <div class="mf">
+          <label>Author</label>
+          <input id="bdAuthor" placeholder="Author" oninput="updateActiveBookField('author', this.value)">
+        </div>
+
+        <div class="book-progress-row">
+          <div class="mf" style="margin-bottom:0">
+            <label>Status</label>
+            <select id="bdStatus" onchange="updateActiveBookStatus(this.value)">
+              <option value="unread">To Read</option>
+              <option value="reading">Reading</option>
+              <option value="done">Finished</option>
+            </select>
+          </div>
+
+          <div class="mf" style="margin-bottom:0">
+            <label>Rating (1–5)</label>
+            <input id="bdRating" type="number" min="1" max="5" placeholder="—" onchange="updateActiveBookRating(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <div class="book-detail-block">
+        <div class="book-detail-kicker">Progress</div>
+
+        <div class="book-progress-row">
+          <div class="mf" style="margin-bottom:0">
+            <label>Current Page</label>
+            <input id="bdCurrentPage" type="number" min="0" placeholder="0" oninput="updateActiveBookPages()">
+          </div>
+
+          <div class="mf" style="margin-bottom:0">
+            <label>Total Pages</label>
+            <input id="bdTotalPages" type="number" min="0" placeholder="0" oninput="updateActiveBookPages()">
+          </div>
+        </div>
+
+        <div class="book-progress-bar">
+          <div id="bdProgressFill" class="book-progress-fill"></div>
+        </div>
+        <div id="bdProgressText" class="book-progress-text">0%</div>
+      </div>
+    </div>
+
+    <div class="book-detail-block" style="margin-bottom:14px">
+      <div class="book-detail-kicker">General Notes</div>
+      <textarea id="bdNotes" class="editable-area" rows="6" placeholder="Thoughts, themes, quotes, reactions…" oninput="updateActiveBookNotes(this.value)"></textarea>
+    </div>
+
+    <div class="book-detail-block">
+      <div class="book-detail-kicker">Chapter Notes</div>
+      <div id="bdChapterNotes" class="chapter-notes"></div>
+
+      <div class="book-detail-actions">
+        <button class="btn btn-g" onclick="addChapterNote()">+ Add Chapter Note</button>
+        <button class="btn btn-g" onclick="closeModal('mBookDetails')">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
 <div id="toast"></div>
 
 <div id="updateCard" class="update-card hidden">
