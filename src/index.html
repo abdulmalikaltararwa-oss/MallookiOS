@@ -708,10 +708,16 @@ function deepMerge(base,over){
 function uploadHero(input){
   const f=input.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=e=>{S.heroImg=e.target.result;const img=eid('heroImg');img.src=S.heroImg;img.classList.add('has-image');scheduleSave();};
-  r.readAsDataURL(f);
+  r.onload=e=>{S.heroImg=e.target.result;
+  const img = eid('heroImg');
+if(S.heroImg){
+  img.src = S.heroImg;
+  img.classList.add('has-image');}
+  else {
+    img.src = '';
+    img.classList.remove('has-image');}
+              }
 }
-
 /* ══ HABITS ══ */
 
 /* ══ GYM ══ */
