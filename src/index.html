@@ -623,6 +623,8 @@ main{flex:1; padding:26px 44px 60px;}
 <script src="./renderer/auth.js"></script>  
 <script src="./renderer/sync.js"></script>  
 <script src="./renderer/utils.js"></script>
+<script src="./renderer/updater.js"></script>
+<script src="./renderer/habits.js"></script>
 <script>
 'use strict';
 
@@ -701,80 +703,6 @@ function deepMerge(base,over){
   return r;
 }
 
-function showUpdateCard() {
-  eid('updateCard').classList.remove('hidden');
-}
-
-function hideUpdateCard() {
-  eid('updateCard').classList.add('hidden');
-}
-
-function dismissUpdateCard() {
-  hideUpdateCard();
-}
-
-async function installUpdateNow() {
-  if (window.updater) {
-    await window.updater.install();
-  }
-}
-  
-if (window.updater) {
-  window.updater.onEvent((msg) => {
-    const title = eid('updateTitle');
-    const sub = eid('updateSub');
-    const wrap = eid('updateProgressWrap');
-    const fill = eid('updateProgressFill');
-    const text = eid('updateProgressText');
-    const actions = eid('updateActions');
-
-    showUpdateCard();
-
-    if (msg.event === 'checking') {
-      title.textContent = 'Checking for updates…';
-      sub.textContent = 'Looking for a newer version of MallookiOS.';
-      wrap.classList.add('hidden');
-      actions.classList.add('hidden');
-    }
-
-    if (msg.event === 'available') {
-      title.textContent = `Update ${msg.version} available`;
-      sub.textContent = 'Downloading in the background.';
-      wrap.classList.remove('hidden');
-      actions.classList.add('hidden');
-      fill.style.width = '0%';
-      text.textContent = '0%';
-    }
-
-    if (msg.event === 'progress') {
-      const pct = Math.round(msg.percent || 0);
-      title.textContent = 'Downloading update…';
-      sub.textContent = 'MallookiOS is updating in the background.';
-      wrap.classList.remove('hidden');
-      actions.classList.add('hidden');
-      fill.style.width = pct + '%';
-      text.textContent = pct + '% downloaded';
-    }
-
-    if (msg.event === 'downloaded') {
-      title.textContent = `Update ${msg.version} ready`;
-      sub.textContent = 'Restart now to install the latest version.';
-      wrap.classList.add('hidden');
-      actions.classList.remove('hidden');
-    }
-
-    if (msg.event === 'not-available') {
-      hideUpdateCard();
-    }
-
-    if (msg.event === 'error') {
-      title.textContent = 'Update check failed';
-      sub.textContent = msg.message || 'Something went wrong while checking for updates.';
-      wrap.classList.add('hidden');
-      actions.classList.add('hidden');
-    }
-  });
-}
   
 /* ══ HERO ══ */
 function uploadHero(input){
@@ -785,41 +713,6 @@ function uploadHero(input){
 }
 
 /* ══ HABITS ══ */
-function renderHabits(){
-  const week=weekDays(),c=eid('habitList');c.innerHTML='';
-  S.habits.forEach(h=>{
-    const str=calcStreak(h.days);
-    const row=document.createElement('div');row.className='habit-row';
-    row.innerHTML=`
-      <input class="editable habit-name-inp" value="${h.name}" onchange="updateHabitName(${h.id},this.value)" title="Click to rename">
-      <div class="habit-days">
-        ${week.map((d,i)=>{
-          const on=h.days[d],isTod=d===today();
-          return `<div class="day-dot ${on?(isTod?'today-on':'on'):''}" title="${d}" onclick="toggleH(${h.id},'${d}')">${DAY_SHORT[i].slice(0,2)}</div>`;
-        }).join('')}
-      </div>
-      <div class="habit-streak-n">${str>0?str+'d':''}</div>
-      <button class="habit-del" onclick="delHabit(${h.id})">✕</button>`;
-    c.appendChild(row);
-  });
-  updateStreaks();
-}
-function updateHabitName(id,val){const h=S.habits.find(h=>h.id===id);if(h){h.name=val;scheduleSave();}}
-function toggleH(id,date){const h=S.habits.find(h=>h.id===id);if(!h)return;h.days[date]=!h.days[date];scheduleSave();renderHabits();}
-function delHabit(id){if(!confirm('Remove habit?'))return;S.habits=S.habits.filter(h=>h.id!==id);scheduleSave();renderHabits();}
-function addHabit(){
-  const name=eid('newHabitName').value.trim();if(!name)return;
-  S.habits.push({id:Date.now(),name,days:{}});eid('newHabitName').value='';
-  scheduleSave();renderHabits();toast(`"${name}" added`);
-}
-function updateStreaks(){
-  const pids=[1,2,3,4,5],pDays={};
-  weekDays().forEach(d=>{if(pids.every(pid=>{const h=S.habits.find(h=>h.id===pid);return h&&h.days[d];}))pDays[d]=true;});
-  eid('s-prayer').textContent=calcStreak(pDays)+'d';
-  [[7,'s-gym'],[6,'s-cardio'],[8,'s-read']].forEach(([hid,elId])=>{
-    const h=S.habits.find(h=>h.id===hid);eid(elId).textContent=(h?calcStreak(h.days):0)+'d';
-  });
-}
 
 /* ══ GYM ══ */
 function renderGymWeek(){
