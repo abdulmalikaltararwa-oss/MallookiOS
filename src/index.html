@@ -621,10 +621,15 @@ main{flex:1; padding:26px 44px 60px;}
 </div>
 
 <script src="./Renderer/utils.js"></script>
-<script src="./Renderer/auth.js"></script>  
-<script src="./Renderer/sync.js"></script>  
+<script src="./Renderer/auth.js"></script>
+<script src="./Renderer/sync.js"></script>
 <script src="./Renderer/updater.js"></script>
 <script src="./Renderer/habits.js"></script>
+<script src="./Renderer/fitness.js"></script>
+<script src="./Renderer/goals.js"></script>
+<script src="./Renderer/programs.js"></script>
+<script src="./Renderer/books.js"></script>
+<script src="./Renderer/modals.js"></script>
 <script>
 'use strict';
 
@@ -706,216 +711,27 @@ function deepMerge(base,over){
   
 /* ══ HERO ══ */
 function uploadHero(input){
-  const f=input.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{S.heroImg=e.target.result;
-  const img = eid('heroImg');
-if(S.heroImg){
-  img.src = S.heroImg;
-  img.classList.add('has-image');}
-  else {
-    img.src = '';
-    img.classList.remove('has-image');}
-              }
-}
-/* ══ HABITS ══ */
+  const f = input.files[0];
+  if(!f) return;
 
-/* ══ GYM ══ */
-function renderGymWeek(){
-  const week=weekDays(),c=eid('gymWeek');c.innerHTML='';
-  week.forEach((d,i)=>{
-    const wd=S.workout[i]||{type:'Rest',rest:true},done=S.gymLog[d],isRest=wd.rest;
-    const div=document.createElement('div');div.className=`gym-day${isRest?' rest':''}${done?' done':''}`;
-    div.innerHTML=`<div class="dn">${DAY_SHORT[i]}</div>
-      <input class="editable wt-inp" value="${wd.type}" onchange="updateWDay(${i},this.value)" onclick="event.stopPropagation()" title="Click to rename">
-      <div class="ck">${done?'✓':isRest?'—':'○'}</div>`;
-    div.addEventListener('click',()=>{
-      if(isRest)return;
-      S.gymLog[d]=!S.gymLog[d];
-      if(S.gymLog[d]){const gh=S.habits.find(h=>h.id===7);if(gh)gh.days[d]=true;}
-      scheduleSave();renderGymWeek();renderHabits();
-    });
-    c.appendChild(div);
-  });
-}
-function updateWDay(i,val){S.workout[i].type=val;S.workout[i].rest=val.toLowerCase()==='rest';scheduleSave();}
+  const r = new FileReader();
+  r.onload = e => {
+    S.heroImg = e.target.result;
 
-function renderWorkoutCards(){
-  const c=eid('workoutCards');c.innerHTML='';
-  S.workoutCards.forEach(wc=>{
-    const div=document.createElement('div');div.className='card';
-    div.innerHTML=`
-      <div class="wk-head">
-        <input class="editable wk-title-inp" value="${wc.title}" onchange="updateWCF(${wc.id},'title',this.value)" title="Edit title">
-        <input class="editable wk-badge-inp" value="${wc.subtitle}" onchange="updateWCF(${wc.id},'subtitle',this.value)" title="Edit subtitle" style="background:var(--rose);padding:2px 7px;border-radius:20px;font-size:0.58rem;width:auto;">
-      </div>
-      <div class="exlist">
-        ${wc.exercises.map(ex=>`
-          <div class="ex-item">
-            <input class="editable ex-name-inp" value="${ex.name}" onchange="updateEx(${wc.id},${ex.id},'name',this.value)" title="Edit exercise">
-            <input class="editable ex-sets-inp" value="${ex.sets}" onchange="updateEx(${wc.id},${ex.id},'sets',this.value)" title="Edit sets/reps">
-            <button class="ex-del" onclick="delEx(${wc.id},${ex.id})">✕</button>
-          </div>`).join('')}
-      </div>
-      <div class="add-ex-row" style="margin-top:9px">
-        <input class="add-inp" id="exN-${wc.id}" placeholder="Exercise…" style="flex:1">
-        <input class="add-inp" id="exS-${wc.id}" placeholder="3×10" style="width:56px;flex:none">
-        <button class="btn btn-g" style="font-size:0.68rem;padding:4px 9px" onclick="addEx(${wc.id})">+ Add</button>
-      </div>`;
-    c.appendChild(div);
-  });
-}
-function updateWCF(id,f,v){const wc=S.workoutCards.find(w=>w.id===id);if(wc){wc[f]=v;scheduleSave();}}
-function updateEx(wcId,exId,f,v){const wc=S.workoutCards.find(w=>w.id===wcId);if(!wc)return;const ex=wc.exercises.find(e=>e.id===exId);if(ex){ex[f]=v;scheduleSave();}}
-function delEx(wcId,exId){const wc=S.workoutCards.find(w=>w.id===wcId);if(!wc)return;wc.exercises=wc.exercises.filter(e=>e.id!==exId);scheduleSave();renderWorkoutCards();}
-function addEx(wcId){
-  const name=eid(`exN-${wcId}`).value.trim();if(!name)return;
-  const sets=eid(`exS-${wcId}`).value.trim()||'3×10';
-  const wc=S.workoutCards.find(w=>w.id===wcId);if(!wc)return;
-  wc.exercises.push({id:Date.now(),name,sets});
-  eid(`exN-${wcId}`).value='';eid(`exS-${wcId}`).value='';
-  scheduleSave();renderWorkoutCards();
-}
+    const img = eid('heroImg');
+    if (S.heroImg) {
+      img.src = S.heroImg;
+      img.classList.add('has-image');
+    } else {
+      img.src = '';
+      img.classList.remove('has-image');
+    }
 
-function logCardio(){
-  const mins=parseInt(eid('cardioMins').value)||0;if(mins<=0)return;
-  S.cardioLog[today()]=(S.cardioLog[today()]||0)+mins;
-  if(S.cardioLog[today()]>=30){const ch=S.habits.find(h=>h.id===6);if(ch)ch.days[today()]=true;}
-  scheduleSave();renderHabits();updateCardioDisplay();
-  eid('cardioMins').value=0;
-  toast(`${mins} min logged — total today: ${S.cardioLog[today()]} min`);
-}
-function updateCardioDisplay(){const t=S.cardioLog[today()]||0;eid('cardioToday').textContent=t>0?`${t} min today`:'';}
+    scheduleSave();
+  };
 
-/* ══ GOALS ══ */
-function renderGoals(){
-  const c=eid('goalsGrid');c.innerHTML='';let any=false;
-  ALL_CATS.forEach(cat=>{
-    const list=S.goals.filter(g=>g.category===cat);if(!list.length)return;
-    any=true;
-    const col=document.createElement('div');col.className='goal-cat';
-    col.innerHTML=`<h3>${cat}</h3>`;
-    list.forEach(g=>{
-      const pct=g.progress||0;
-      const div=document.createElement('div');div.className='goal-item';
-      div.innerHTML=`
-        <button class="goal-del" onclick="delGoal(${g.id})">✕</button>
-        <div class="goal-head">
-          <div class="goal-circle ${pct===100?'done':pct>0?'inprog':''}" onclick="nudgeGoal(${g.id})" title="Click to advance">${pct===100?'✓':''}</div>
-          <input class="editable goal-txt-inp" value="${g.text}" onchange="updateGF(${g.id},'text',this.value)" title="Click to edit">
-        </div>
-        ${g.notes?`<div style="font-size:0.7rem;color:var(--muted);margin-bottom:5px;font-style:italic">${g.notes}</div>`:''}
-        <div class="goal-bar"><div class="goal-fill" style="width:${pct}%"></div></div>
-        <div class="goal-footer">
-          <input class="editable goal-dl-inp" type="date" value="${g.deadline||''}" onchange="updateGF(${g.id},'deadline',this.value)">
-          <input class="goal-pct-inp" type="number" min="0" max="100" value="${pct}" onchange="setGoalPct(${g.id},this.value)" title="Edit %">
-        </div>`;
-      col.appendChild(div);
-    });
-    const add=document.createElement('button');add.className='btn-dash';add.textContent=`+ ${cat} goal`;
-    add.onclick=()=>{eid('gCat').value=cat;openModal('mGoal');};
-    col.appendChild(add);c.appendChild(col);
-  });
-  if(!any)c.innerHTML=`<div style="color:var(--muted);grid-column:span 2;padding:14px">No goals yet.</div>`;
-}
-function updateGF(id,f,v){const g=S.goals.find(g=>g.id===id);if(g){g[f]=v;scheduleSave();renderGoals();}}
-function nudgeGoal(id){const g=S.goals.find(g=>g.id===id);if(!g)return;const steps=[0,25,50,75,100];const i=steps.indexOf(Math.round(g.progress/25)*25);g.progress=steps[(i+1)%steps.length];scheduleSave();renderGoals();}
-function setGoalPct(id,v){const g=S.goals.find(g=>g.id===id);if(!g)return;g.progress=Math.min(100,Math.max(0,parseInt(v)||0));scheduleSave();renderGoals();}
-function delGoal(id){if(!confirm('Delete goal?'))return;S.goals=S.goals.filter(g=>g.id!==id);scheduleSave();renderGoals();}
-function saveGoal(){
-  const text=eid('gText').value.trim();if(!text)return;
-  S.goals.push({id:Date.now(),text,category:eid('gCat').value,deadline:eid('gDl').value,progress:parseInt(eid('gPct').value)||0,notes:eid('gNotes').value.trim()});
-  scheduleSave();renderGoals();closeModal('mGoal');toast('Goal added');
-}
-
-/* ══ PROGRAMS ══ */
-let progF='all';
-function renderProgs(){
-  const c=eid('progsGrid');c.innerHTML='';
-  const list=progF==='all'?S.programs:S.programs.filter(p=>p.status===progF);
-  if(!list.length){c.innerHTML=`<div style="color:var(--muted);font-size:0.8rem">None here yet.</div>`;return;}
-  list.forEach(p=>{
-    const div=document.createElement('div');div.className='card prog-card';
-    div.innerHTML=`
-      <div class="prog-top">
-        <div style="flex:1">
-          <input class="editable prog-school-inp" value="${p.school}" onchange="updatePF(${p.id},'school',this.value)">
-          <input class="editable prog-name-inp" value="${p.name}" onchange="updatePF(${p.id},'name',this.value)">
-          ${p.deadline?`<div style="font-size:0.6rem;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace">Due: ${p.deadline}</div>`:''}
-        </div>
-        <span class="spill s-${p.status.toLowerCase()}" onclick="cycleStatus(${p.id})" title="Click to change">${p.status}</span>
-      </div>
-      <input class="editable prog-notes-inp" value="${p.notes||''}" placeholder="Notes…" onchange="updatePF(${p.id},'notes',this.value)">
-      <div style="margin-top:9px">
-        <button class="btn btn-d" style="font-size:0.68rem;padding:3px 9px" onclick="delProg(${p.id})">Remove</button>
-      </div>`;
-    c.appendChild(div);
-  });
-}
-function updatePF(id,f,v){const p=S.programs.find(p=>p.id===id);if(p){p[f]=v;scheduleSave();}}
-function setProgF(f,btn){progF=f;document.querySelectorAll('#progFilters .fpill').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderProgs();}
-function cycleStatus(id){const p=S.programs.find(p=>p.id===id);if(!p)return;const s=['Wishlist','Applied','Pending','Admitted','Rejected'];p.status=s[(s.indexOf(p.status)+1)%s.length];scheduleSave();renderProgs();toast('Status updated');}
-function delProg(id){if(!confirm('Remove program?'))return;S.programs=S.programs.filter(p=>p.id!==id);scheduleSave();renderProgs();}
-function saveProg(){
-  const school=eid('pSchool').value.trim();if(!school)return;
-  S.programs.push({id:Date.now(),school,name:eid('pName').value.trim(),location:eid('pLoc').value.trim(),status:eid('pStat').value,deadline:eid('pDl').value,notes:eid('pNotes').value.trim()});
-  scheduleSave();renderProgs();closeModal('mProg');toast('Program added');
-}
-
-/* ══ BOOKS ══ */
-let bookF='all';
-function renderBooks(){
-  const c=eid('booksGrid');c.innerHTML='';
-  const list=bookF==='all'?S.books:S.books.filter(b=>b.status===bookF);
-  if(!list.length){c.innerHTML=`<div style="color:var(--muted);font-size:0.8rem;padding:8px">None here.</div>`;return;}
-  list.forEach((b,idx)=>{
-    const div=document.createElement('div');div.className='book-card';
-    const pal=PALS[idx%PALS.length];
-    const stars=b.rating?'★'.repeat(b.rating)+'☆'.repeat(5-b.rating):'';
-    const slbl={unread:'To Read',reading:'Reading',done:'Finished'}[b.status];
-    div.innerHTML=`
-      <div class="book-cover" style="background:${pal}">
-        ${b.coverUrl?`<img src="${b.coverUrl}" alt="">`:`<div class="book-cover-ph"><div class="ph-icon">◆</div><div>${b.title}</div></div>`}
-        <div class="book-cover-overlay"><span>Add Cover</span><input type="file" accept="image/*" onchange="uploadCover(${b.id},this)"></div>
-      </div>
-      <div class="book-info">
-        <input class="editable book-title-inp" value="${b.title}" onchange="updateBF(${b.id},'title',this.value)">
-        <input class="editable book-author-inp" value="${b.author}" onchange="updateBF(${b.id},'author',this.value)">
-        <div class="book-row">
-          <span class="bstatus bs-${b.status}" onclick="cycleBook(${b.id})" title="Click to change">${slbl}</span>
-          ${stars?`<span class="b-stars">${stars}</span>`:''}
-        </div>
-      </div>
-      <button class="book-del" onclick="delBook(${b.id})">✕</button>`;
-    c.appendChild(div);
-  });
-}
-function updateBF(id,f,v){const b=S.books.find(b=>b.id===id);if(b){b[f]=v;scheduleSave();}}
-function setBookF(f,btn){bookF=f;document.querySelectorAll('.book-filters .fpill').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderBooks();}
-function cycleBook(id){
-  const b=S.books.find(b=>b.id===id);if(!b)return;
-  const cyc=['unread','reading','done'];b.status=cyc[(cyc.indexOf(b.status)+1)%cyc.length];
-  if(b.status==='reading'){const rh=S.habits.find(h=>h.id===8);if(rh)rh.days[today()]=true;}
-  scheduleSave();renderBooks();renderHabits();
-}
-function uploadCover(id,input){
-  const f=input.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{const b=S.books.find(b=>b.id===id);if(b){b.coverUrl=e.target.result;scheduleSave();renderBooks();}};
   r.readAsDataURL(f);
 }
-function delBook(id){if(!confirm('Remove book?'))return;S.books=S.books.filter(b=>b.id!==id);scheduleSave();renderBooks();}
-function saveBook(){
-  const title=eid('bkT').value.trim();if(!title)return;
-  S.books.push({id:Date.now(),title,author:eid('bkA').value.trim(),status:eid('bkS').value,rating:parseInt(eid('bkR').value)||null,notes:eid('bkN').value.trim(),coverUrl:''});
-  scheduleSave();renderBooks();closeModal('mBook');toast(`"${title}" added`);
-}
-
-/* ══ MODALS ══ */
-function openModal(id){eid(id).classList.add('open');}
-function closeModal(id){eid(id).classList.remove('open');}
-document.querySelectorAll('.modal-bg').forEach(bg=>{bg.addEventListener('click',e=>{if(e.target===bg)bg.classList.remove('open');});});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-bg.open').forEach(m=>m.classList.remove('open'));});
 
 /* ══ EXPORT / IMPORT ══ */
 async function doExport(){const res=await window.api.exportData(JSON.stringify(S,null,2));if(res.ok)toast('Backup exported!');}
@@ -934,17 +750,23 @@ function go(name,btn){
 
 /* ══ RENDER ALL ══ */
 function renderAll(){
-  eid('appTitle').textContent=S.appTitle;
-  eid('appSub').textContent=S.appSub;
-  if(S.heroImg){
-    const img=eid('heroImg');
-    img.src=S.heroImg;
+  eid('appTitle').textContent = S.appTitle;
+  eid('appSub').textContent = S.appSub;
+
+  const img = eid('heroImg');
+  if (S.heroImg) {
+    img.src = S.heroImg;
     img.classList.add('has-image');
+  } else {
+    img.src = '';
+    img.classList.remove('has-image');
   }
-  eid('quoteText').value=S.quote.text;
-  eid('quoteAuthor').value=S.quote.author;
-  eid('cardioTarget').value=S.cardioTarget||'';
+
+  eid('quoteText').value = S.quote.text;
+  eid('quoteAuthor').value = S.quote.author;
+  eid('cardioTarget').value = S.cardioTarget || '';
   eid('dailyNotes').value = S.notes[today()] || '';
+
   renderHabits();
   renderGymWeek();
   renderWorkoutCards();
