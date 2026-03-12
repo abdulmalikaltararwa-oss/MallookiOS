@@ -84,3 +84,19 @@ function updateStreaks(){
   setStreak('s-gym',p.gym!==false,streakOf(hfind('gym','lift','workout','training','weights')));
   setStreak('s-read',p.read!==false,streakOf(hfind('read','reading','book')));
 }
+
+function openStreaks(){
+  const p=S.streakPrefs||{};
+  eid('stPrayer').checked=!!p.prayer;
+  eid('stCardio').checked=p.cardio!==false;
+  eid('stGym').checked=p.gym!==false;
+  eid('stRead').checked=p.read!==false;
+  openModal('mStreaks');
+}
+
+function toggleStreakPref(k,v){
+  if(!S.streakPrefs)S.streakPrefs={prayer:false,cardio:true,gym:true,read:true};
+  S.streakPrefs[k]=v;
+  scheduleSave();
+  updateStreaks();
+}
