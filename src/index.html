@@ -564,10 +564,10 @@ main{flex:1; padding:26px 44px 60px;}
         <input id="quoteAuthor" class="editable" placeholder="— Author" oninput="S.quote.author=this.value;scheduleSave()">
       </div>
       <div class="card streak-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;justify-content:space-between">
           <h3>Streaks</h3>
-          <button class="btn btn-g" style="font-size:0.62rem;padding:4px 8px;" onclick="openModal('mStreaks')">Edit</button>
-        </div>
+          <button class="btn btn-g" style="padding:3px 8px;font-size:0.62rem" onclick="openStreaks()">Edit</button>
+         </div>
         <div id="streakList"></div>
       </div>
     </div>
@@ -764,6 +764,7 @@ main{flex:1; padding:26px 44px 60px;}
 const DS = {
   appTitle:'Mallooki OS', appSub:'Kuwait · Fall 2026', heroImg:'',
   quote:{ text:'Welcome to Mallooki OS. Edit any heading, click habits to mark them, and use the + buttons to shape this into your own system.', author:'— Begin anywhere' },
+  streakPrefs:{prayer:false,cardio:true,gym:true,read:true},
   cardioTarget:'30 min cardio — run, walk, or cycle',
   habits:[
     {id:1,name:'Gym / Lift',days:{}},
@@ -818,7 +819,6 @@ books:[
   {id:10,title:'Animal Farm',author:'George Orwell',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
   {id:11,title:'The Brothers Karamazov',author:'Fyodor Dostoevsky',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
 ],
-streakPrefs:{prayer:false,cardio:true,gym:true,read:true,study:true},
 gymLog:{},
 cardioLog:{},
 notes:{},
