@@ -564,11 +564,11 @@ main{flex:1; padding:26px 44px 60px;}
         <input id="quoteAuthor" class="editable" placeholder="— Author" oninput="S.quote.author=this.value;scheduleSave()">
       </div>
       <div class="card streak-card">
-        <h3>Streaks</h3>
-        <div class="streak-row"><span class="streak-lbl">Prayer (All 5)</span><span class="streak-val" id="s-prayer">0d</span></div>
-        <div class="streak-row"><span class="streak-lbl">Cardio</span>        <span class="streak-val" id="s-cardio">0d</span></div>
-        <div class="streak-row"><span class="streak-lbl">Gym</span>            <span class="streak-val" id="s-gym">0d</span></div>
-        <div class="streak-row"><span class="streak-lbl">Reading</span>        <span class="streak-val" id="s-read">0d</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <h3>Streaks</h3>
+          <button class="btn btn-g" style="font-size:0.62rem;padding:4px 8px;" onclick="openModal('mStreaks')">Edit</button>
+        </div>
+        <div id="streakList"></div>
       </div>
     </div>
     <div class="sec">Daily Habits <span class="lbl">This Week</span></div>
@@ -646,140 +646,86 @@ main{flex:1; padding:26px 44px 60px;}
 </div>
 
 <!-- MODALS -->
-<div class="modal-bg" id="mGoal">
-  <div class="modal">
-    <h2>New Goal</h2>
-    <div class="mf"><label>Goal</label><input id="gText" placeholder="What do you want to achieve?"></div>
-    <div class="mf"><label>Category</label>
-      <select id="gCat">
-        <option>Academic</option><option>Career</option><option>Health</option>
-        <option>Personal</option><option>Creative</option>
-      </select>
-    </div>
-    <div class="mf"><label>Deadline</label><input id="gDl" type="date"></div>
-    <div class="mf"><label>Progress — <span id="gPLbl">0</span>%</label>
-      <input id="gPct" type="range" min="0" max="100" value="0" oninput="eid('gPLbl').textContent=this.value">
-    </div>
-    <div class="mf"><label>Notes</label><textarea id="gNotes" placeholder="Context…"></textarea></div>
-    <div class="modal-acts">
-      <button class="btn btn-g" onclick="closeModal('mGoal')">Cancel</button>
-      <button class="btn btn-p" onclick="saveGoal()">Save</button>
-    </div>
-  </div>
-</div>
-<div class="modal-bg" id="mProg">
-  <div class="modal">
-    <h2>Add Project</h2>
-    <div class="mf"><label>Title</label><input id="pSchool" placeholder="e.g. Economics Applications"></div>
-    <div class="mf"><label>Type</label><input id="pName" placeholder="e.g. Academic Track"></div>
-    <div class="mf"><label>Context</label><input id="pLoc" placeholder="e.g. Fall 2026 / Personal / Career"></div>
-    <div class="mf"><label>Status</label>
-      <select id="pStat">
-        <option>Wishlist</option>
-        <option>Applied</option>
-        <option>Pending</option>
-        <option>Admitted</option>
-        <option>Rejected</option>
-      </select>
-    </div>
-    <div class="mf"><label>Target Date</label><input id="pDl" type="date"></div>
-    <div class="mf"><label>Notes</label><textarea id="pNotes" placeholder="What this area is for, key tasks, next steps…"></textarea></div>
-    <div class="modal-acts">
-      <button class="btn btn-g" onclick="closeModal('mProg')">Cancel</button>
-      <button class="btn btn-p" onclick="saveProg()">Save</button>
-    </div>
-  </div>
-</div>
-<div class="modal-bg" id="mBook">
-  <div class="modal">
-    <h2>Add Book</h2>
-    <div class="mf"><label>Title</label><input id="bkT" placeholder="Title"></div>
-    <div class="mf"><label>Author</label><input id="bkA" placeholder="Author"></div>
-    <div class="mf"><label>Status</label>
-      <select id="bkS"><option value="unread">To Read</option><option value="reading">Reading</option><option value="done">Finished</option></select>
-    </div>
-    <div class="mf"><label>Rating (1–5)</label><input id="bkR" type="number" min="1" max="5" placeholder="—"></div>
-    <div class="mf"><label>Notes</label><textarea id="bkN" placeholder="Thoughts…"></textarea></div>
-    <div class="modal-acts">
-      <button class="btn btn-g" onclick="closeModal('mBook')">Cancel</button>
-      <button class="btn btn-p" onclick="saveBook()">Save</button>
-    </div>
-  </div>
-</div>
+<div class="modal-bg" id="mGoal"><div class="modal">
+  <h2>New Goal</h2>
+  <div class="mf"><label>Goal</label><input id="gText" placeholder="What do you want to achieve?"></div>
+  <div class="mf"><label>Category</label><select id="gCat"><option>Academic</option><option>Career</option><option>Health</option><option>Personal</option><option>Creative</option></select></div>
+  <div class="mf"><label>Deadline</label><input id="gDl" type="date"></div>
+  <div class="mf"><label>Progress — <span id="gPLbl">0</span>%</label><input id="gPct" type="range" min="0" max="100" value="0" oninput="eid('gPLbl').textContent=this.value"></div>
+  <div class="mf"><label>Notes</label><textarea id="gNotes" placeholder="Context…"></textarea></div>
+  <div class="modal-acts"><button class="btn btn-g" onclick="closeModal('mGoal')">Cancel</button><button class="btn btn-p" onclick="saveGoal()">Save</button></div>
+</div></div>
 
-<div class="modal-bg" id="mBookDetails">
-  <div class="modal book-detail-modal">
-    <h2>Book Details</h2>
+<div class="modal-bg" id="mProg"><div class="modal">
+  <h2>Add Project</h2>
+  <div class="mf"><label>Title</label><input id="pSchool" placeholder="e.g. Economics Applications"></div>
+  <div class="mf"><label>Type</label><input id="pName" placeholder="e.g. Academic Track"></div>
+  <div class="mf"><label>Context</label><input id="pLoc" placeholder="e.g. Fall 2026 / Personal / Career"></div>
+  <div class="mf"><label>Status</label><select id="pStat"><option>Wishlist</option><option>Applied</option><option>Pending</option><option>Admitted</option><option>Rejected</option></select></div>
+  <div class="mf"><label>Target Date</label><input id="pDl" type="date"></div>
+  <div class="mf"><label>Notes</label><textarea id="pNotes" placeholder="What this area is for, key tasks, next steps…"></textarea></div>
+  <div class="modal-acts"><button class="btn btn-g" onclick="closeModal('mProg')">Cancel</button><button class="btn btn-p" onclick="saveProg()">Save</button></div>
+</div></div>
 
-    <div class="book-detail-grid">
-      <div class="book-detail-block">
-        <div class="book-detail-kicker">Book</div>
+<div class="modal-bg" id="mBook"><div class="modal">
+  <h2>Add Book</h2>
+  <div class="mf"><label>Title</label><input id="bkT" placeholder="Title"></div>
+  <div class="mf"><label>Author</label><input id="bkA" placeholder="Author"></div>
+  <div class="mf"><label>Status</label><select id="bkS"><option value="unread">To Read</option><option value="reading">Reading</option><option value="done">Finished</option></select></div>
+  <div class="mf"><label>Rating (1–5)</label><input id="bkR" type="number" min="1" max="5" placeholder="—"></div>
+  <div class="mf"><label>Notes</label><textarea id="bkN" placeholder="Thoughts…"></textarea></div>
+  <div class="modal-acts"><button class="btn btn-g" onclick="closeModal('mBook')">Cancel</button><button class="btn btn-p" onclick="saveBook()">Save</button></div>
+</div></div>
 
-        <div class="mf">
-          <label>Title</label>
-          <input id="bdTitle" placeholder="Book title" oninput="updateActiveBookField('title', this.value)">
-        </div>
+<div class="modal-bg" id="mBookDetails"><div class="modal book-detail-modal">
+  <h2>Book Details</h2>
 
-        <div class="mf">
-          <label>Author</label>
-          <input id="bdAuthor" placeholder="Author" oninput="updateActiveBookField('author', this.value)">
-        </div>
-
-        <div class="book-progress-row">
-          <div class="mf" style="margin-bottom:0">
-            <label>Status</label>
-            <select id="bdStatus" onchange="updateActiveBookStatus(this.value)">
-              <option value="unread">To Read</option>
-              <option value="reading">Reading</option>
-              <option value="done">Finished</option>
-            </select>
-          </div>
-
-          <div class="mf" style="margin-bottom:0">
-            <label>Rating (1–5)</label>
-            <input id="bdRating" type="number" min="1" max="5" placeholder="—" onchange="updateActiveBookRating(this.value)">
-          </div>
-        </div>
+  <div class="book-detail-grid">
+    <div class="book-detail-block">
+      <div class="book-detail-kicker">Book</div>
+      <div class="mf"><label>Title</label><input id="bdTitle" placeholder="Book title" oninput="updateActiveBookField('title', this.value)"></div>
+      <div class="mf"><label>Author</label><input id="bdAuthor" placeholder="Author" oninput="updateActiveBookField('author', this.value)"></div>
+      <div class="book-progress-row">
+        <div class="mf" style="margin-bottom:0"><label>Status</label><select id="bdStatus" onchange="updateActiveBookStatus(this.value)"><option value="unread">To Read</option><option value="reading">Reading</option><option value="done">Finished</option></select></div>
+        <div class="mf" style="margin-bottom:0"><label>Rating (1–5)</label><input id="bdRating" type="number" min="1" max="5" placeholder="—" onchange="updateActiveBookRating(this.value)"></div>
       </div>
-
-      <div class="book-detail-block">
-        <div class="book-detail-kicker">Progress</div>
-
-        <div class="book-progress-row">
-          <div class="mf" style="margin-bottom:0">
-            <label>Current Page</label>
-            <input id="bdCurrentPage" type="number" min="0" placeholder="0" oninput="updateActiveBookPages()">
-          </div>
-
-          <div class="mf" style="margin-bottom:0">
-            <label>Total Pages</label>
-            <input id="bdTotalPages" type="number" min="0" placeholder="0" oninput="updateActiveBookPages()">
-          </div>
-        </div>
-
-        <div class="book-progress-bar">
-          <div id="bdProgressFill" class="book-progress-fill"></div>
-        </div>
-        <div id="bdProgressText" class="book-progress-text">0%</div>
-      </div>
-    </div>
-
-    <div class="book-detail-block" style="margin-bottom:14px">
-      <div class="book-detail-kicker">General Notes</div>
-      <textarea id="bdNotes" class="editable-area" rows="6" placeholder="Thoughts, themes, quotes, reactions…" oninput="updateActiveBookNotes(this.value)"></textarea>
     </div>
 
     <div class="book-detail-block">
-      <div class="book-detail-kicker">Chapter Notes</div>
-      <div id="bdChapterNotes" class="chapter-notes"></div>
-
-      <div class="book-detail-actions">
-        <button class="btn btn-g" onclick="addChapterNote()">+ Add Chapter Note</button>
-        <button class="btn btn-g" onclick="closeModal('mBookDetails')">Done</button>
+      <div class="book-detail-kicker">Progress</div>
+      <div class="book-progress-row">
+        <div class="mf" style="margin-bottom:0"><label>Current Page</label><input id="bdCurrentPage" type="number" min="0" placeholder="0" oninput="updateActiveBookPages()"></div>
+        <div class="mf" style="margin-bottom:0"><label>Total Pages</label><input id="bdTotalPages" type="number" min="0" placeholder="0" oninput="updateActiveBookPages()"></div>
       </div>
+      <div class="book-progress-bar"><div id="bdProgressFill" class="book-progress-fill"></div></div>
+      <div id="bdProgressText" class="book-progress-text">0%</div>
     </div>
   </div>
-</div>
+
+  <div class="book-detail-block" style="margin-bottom:14px">
+    <div class="book-detail-kicker">General Notes</div>
+    <textarea id="bdNotes" class="editable-area" rows="6" placeholder="Thoughts, themes, quotes, reactions…" oninput="updateActiveBookNotes(this.value)"></textarea>
+  </div>
+
+  <div class="book-detail-block">
+    <div class="book-detail-kicker">Chapter Notes</div>
+    <div id="bdChapterNotes" class="chapter-notes"></div>
+    <div class="book-detail-actions">
+      <button class="btn btn-g" onclick="addChapterNote()">+ Add Chapter Note</button>
+      <button class="btn btn-g" onclick="closeModal('mBookDetails')">Done</button>
+    </div>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="mStreaks"><div class="modal">
+  <h2>Edit Streaks</h2>
+  <div class="mf"><label><input type="checkbox" id="st-prayer" onchange="toggleStreakOption('prayer',this.checked)"> Prayer (All 5)</label></div>
+  <div class="mf"><label><input type="checkbox" id="st-cardio" onchange="toggleStreakOption('cardio',this.checked)"> Cardio</label></div>
+  <div class="mf"><label><input type="checkbox" id="st-gym" onchange="toggleStreakOption('gym',this.checked)"> Gym</label></div>
+  <div class="mf"><label><input type="checkbox" id="st-read" onchange="toggleStreakOption('read',this.checked)"> Reading</label></div>
+  <div class="mf"><label><input type="checkbox" id="st-study" onchange="toggleStreakOption('study',this.checked)"> Study</label></div>
+  <div class="modal-acts"><button class="btn btn-p" onclick="closeModal('mStreaks')">Done</button></div>
+</div></div>
   
 <div id="toast"></div>
 
@@ -817,13 +763,17 @@ main{flex:1; padding:26px 44px 60px;}
 /* ══ DEFAULT STATE ══ */
 const DS = {
   appTitle:'Mallooki OS', appSub:'Kuwait · Fall 2026', heroImg:'',
-  quote:{ text:'The mind is not a vessel to be filled, but a fire to be kindled.', author:'— Plutarch' },
+  quote:{ text:'Welcome to Mallooki OS. Edit any heading, click habits to mark them, and use the + buttons to shape this into your own system.', author:'— Begin anywhere' },
   cardioTarget:'30 min cardio — run, walk, or cycle',
   habits:[
-    {id:1,name:'Fajr',days:{}},{id:2,name:'Dhuhr',days:{}},{id:3,name:'Asr',days:{}},
-    {id:4,name:'Maghrib',days:{}},{id:5,name:'Isha',days:{}},
-    {id:6,name:'Cardio',days:{}},{id:7,name:'Gym',days:{}},
-    {id:8,name:'Read',days:{}},{id:9,name:'Study',days:{}},
+    {id:1,name:'Gym / Lift',days:{}},
+    {id:2,name:'Cardio / Walk',days:{}},
+    {id:3,name:'Reading',days:{}},
+    {id:4,name:'Study / Deep Work',days:{}},
+    {id:5,name:'Sleep On Time',days:{}},
+    {id:6,name:'Hydration',days:{}},
+    {id:7,name:'Stretch / Mobility',days:{}},
+    {id:8,name:'Journal / Reflect',days:{}}
   ],
   workout:[
     {type:'Upper',rest:false},{type:'Lower',rest:false},{type:'Full Body',rest:false},
@@ -847,19 +797,14 @@ const DS = {
       {id:305,name:'Cable Row',sets:'3×12'},{id:306,name:'Ab Rollout',sets:'3×10'},
     ]},
   ],
-  goals:[
-    {id:1,text:"Get admitted to a top Economics Master's program",category:'Academic',deadline:'2026-05-01',progress:60,notes:'Quant-track programs'},
-    {id:2,text:'Finish GCC metro urban economics paper',category:'Academic',deadline:'2025-12-15',progress:75,notes:''},
-    {id:3,text:'Read 6 books this year',category:'Personal',deadline:'2026-08-01',progress:10,notes:''},
-    {id:4,text:'Gym consistently 3 months',category:'Health',deadline:'2026-03-31',progress:20,notes:''},
-    {id:5,text:'Complete psychological fiction short story',category:'Creative',deadline:'2026-04-01',progress:15,notes:'Control & conditioning'},
-  ],
-  programs:[
-    {id:1,school:'Tufts University',name:'MA Economics',location:'Medford, MA',status:'Wishlist',deadline:'',notes:'Strong urban & policy faculty'},
-    {id:2,school:'Georgia Tech',name:'MS Economics',location:'Atlanta, GA',status:'Wishlist',deadline:'',notes:'Data science + econ'},
-    {id:3,school:'NC State',name:'MA Economics',location:'Raleigh, NC',status:'Wishlist',deadline:'',notes:'Applied, transportation research'},
-    {id:4,school:'University of Utah',name:'MA Economics',location:'Salt Lake City, UT',status:'Wishlist',deadline:'',notes:'PhD-prep, quant track'},
-  ],
+goals:[
+  {id:1,text:'Customize this dashboard into your own Life OS',category:'Personal',deadline:'',progress:15,notes:'Edit titles, add sections, and shape the system around your real life.'},
+  {id:2,text:'Set up your main recurring habits',category:'Health',deadline:'',progress:10,notes:'Prayer, gym, study, reading, sleep, walking — whatever matters most.'}
+],  
+programs:[
+  {id:1,school:'Graduate Applications',name:'Academic Track',location:'Fall 2026',status:'Pending',deadline:'',notes:'Use this section for projects, tracks, applications, business areas, writing pipelines, or any long-term focus.'},
+  {id:2,school:'Aqarna',name:'Business / Product Track',location:'Kuwait',status:'Pending',deadline:'',notes:'Rename, repurpose, or remove this card. This area is meant to be flexible.'}
+],
 books:[
   {id:1,title:'1984',author:'George Orwell',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
   {id:2,title:'The Blade Itself',author:'Joe Abercrombie',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
@@ -872,7 +817,15 @@ books:[
   {id:9,title:'Moby Dick',author:'Herman Melville',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
   {id:10,title:'Animal Farm',author:'George Orwell',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
   {id:11,title:'The Brothers Karamazov',author:'Fyodor Dostoevsky',status:'unread',rating:null,notes:'',coverUrl:'',currentPage:0,totalPages:0,chapterNotes:[]},
-],};
+],
+streakPrefs:{prayer:false,cardio:true,gym:true,read:true,study:true},
+gymLog:{},
+cardioLog:{},
+notes:{},
+workoutHistory:[],
+exerciseHistory:{}
+
+};
 
 let S = JSON.parse(JSON.stringify(DS));
 
@@ -943,7 +896,7 @@ function renderAll(){
   eid('quoteText').value = S.quote.text;
   eid('quoteAuthor').value = S.quote.author;
   eid('cardioTarget').value = S.cardioTarget || '';
-  eid('dailyNotes').value = S.notes[today()] || '';
+  eid('dailyNotes').value=S.notes[today()]||'Use this space for thoughts, tasks, reflections, reminders, or a quick plan for today.';
 
   renderHabits();
   renderGymWeek();
