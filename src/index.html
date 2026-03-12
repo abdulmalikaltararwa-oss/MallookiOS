@@ -930,12 +930,22 @@ function go(name,btn){
 function renderAll(){
   eid('appTitle').textContent=S.appTitle;
   eid('appSub').textContent=S.appSub;
-  if(S.heroImg){const img=eid('heroImg');img.src=S.heroImg;img.classList.add('has-image');}
+  if(S.heroImg){
+    const img=eid('heroImg');
+    img.src=S.heroImg;
+    img.classList.add('has-image');
+  }
   eid('quoteText').value=S.quote.text;
   eid('quoteAuthor').value=S.quote.author;
   eid('cardioTarget').value=S.cardioTarget||'';
-  const n=S.notes[today()];if(n)eid('dailyNotes').value=n;
-  renderHabits();renderGymWeek();renderWorkoutCards();renderGoals();renderProgs();renderBooks();updateCardioDisplay();
+  eid('dailyNotes').value = S.notes[today()] || '';
+  renderHabits();
+  renderGymWeek();
+  renderWorkoutCards();
+  renderGoals();
+  renderProgs();
+  renderBooks();
+  updateCardioDisplay();
 }
 
 /* ══ INLINE TITLE EDITING ══ */
