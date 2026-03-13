@@ -884,6 +884,8 @@ function makeGoal(g={}){
     id: g.id ?? Date.now() + Math.random(),
     text: g.text ?? '',
     category: g.category ?? 'Personal',
+    type: g.type ?? '',
+    context: g.context ?? '',
     deadline: g.deadline ?? '',
     progress: Number.isFinite(+g.progress) ? Math.max(0, Math.min(100, +g.progress)) : 0,
     notes: g.notes ?? ''
