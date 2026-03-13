@@ -20,7 +20,7 @@ function renderGoals() {
   if (!cats.length) {
     c.innerHTML = `
       <div style="color:var(--muted);grid-column:span 2;padding:14px">
-        No projects or focus areas yet.
+        No goals here yet.
       </div>
     `;
     return;
@@ -162,7 +162,7 @@ function saveGoal() {
 
   if (!Array.isArray(S.goals)) S.goals = [];
 
-  S.goals.push({
+  S.goals.push(makeGoal({
     id: Date.now(),
     text,
     category: eid('gCat').value.trim() || 'Unsorted',
@@ -171,13 +171,13 @@ function saveGoal() {
     deadline: eid('gDl').value,
     progress: clampPct(eid('gPct').value),
     notes: eid('gNotes').value.trim()
-  });
+  }));
 
   resetGoalModal();
   closeModal('mGoal');
   scheduleSave();
   renderGoals();
-  toast('Project added');
+  toast('Goal added');
 }
 
 function resetGoalModal() {
