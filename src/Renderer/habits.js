@@ -44,7 +44,10 @@ function delHabit(id){
 function addHabit(){
   const name=eid('newHabitName').value.trim();
   if(!name)return;
-  S.habits.push({id:Date.now(),name,days:{}});
+  S.habits.push(makeHabit({
+    id: Date.now(),
+    name
+  }));
   eid('newHabitName').value='';
   scheduleSave();
   renderHabits();
