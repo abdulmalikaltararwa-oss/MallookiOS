@@ -754,7 +754,7 @@ main{flex:1; padding:26px 44px 60px;}
 <script src="./Renderer/habits.js"></script>
 <script src="./Renderer/fitness.js"></script>
 <script src="./Renderer/goals.js"></script>
-<script src="./Renderer/programs.js"></script>
+<script src="./Renderer/projects.js"></script>
 <script src="./Renderer/books.js"></script>
 <script src="./Renderer/modals.js"></script>
 <script>
@@ -802,7 +802,7 @@ goals:[
   {id:1,text:'Customize this dashboard into your own Life OS',category:'Personal',deadline:'',progress:15,notes:'Edit titles, add sections, and shape the system around your real life.'},
   {id:2,text:'Set up your main recurring habits',category:'Health',deadline:'',progress:10,notes:'Prayer, gym, study, reading, sleep, walking — whatever matters most.'}
 ],  
-programs:[
+projects:[
   {id:1,school:'Graduate Applications',name:'Academic Track',location:'Fall 2026',status:'Pending',deadline:'',notes:'Use this section for projects, tracks, applications, business areas, writing pipelines, or any long-term focus.'},
   {id:2,school:'Aqarna',name:'Business / Product Track',location:'Kuwait',status:'Pending',deadline:'',notes:'Rename, repurpose, or remove this card. This area is meant to be flexible.'}
 ],
@@ -966,7 +966,7 @@ function renderAll(){
   renderGymWeek();
   renderWorkoutCards();
   renderGoals();
-  renderProgs();
+  renderProjects();
   renderBooks();
   updateCardioDisplay();
 }
@@ -998,7 +998,7 @@ async function bootApp(){
   }
 }
 
-initApp();
+bootApp();
 </script>
 </body>
 </html>
