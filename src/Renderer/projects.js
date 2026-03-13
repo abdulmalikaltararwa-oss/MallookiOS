@@ -4,10 +4,7 @@
 let projectF = 'all';
 
 function ensureProjects() {
-  if (!Array.isArray(S.projects)) {
-    S.projects = Array.isArray(S.programs) ? S.programs : [];
-  }
-  S.programs = S.projects;
+  if (!Array.isArray(S.projects)) S.projects = [];
   return S.projects;
 }
 
@@ -144,7 +141,6 @@ function deleteProject(id) {
   if (!confirm('Remove this project?')) return;
 
   S.projects = ensureProjects().filter(x => x.id !== id);
-  S.programs = S.projects;
   scheduleSave();
   renderProjects();
 }
@@ -163,7 +159,6 @@ function saveProject() {
     notes: eid('pNotes').value.trim()
   }));
 
-  S.programs = S.projects;
   resetProjectModal();
   closeModal('mProject');
   scheduleSave();
