@@ -1,7 +1,7 @@
 'use strict';
 
 /* ══ PROJECTS / AREAS ══ */
-let progF = 'all';
+let projectF = 'all';
 
 function ensureProjects() {
   if (!Array.isArray(S.projects)) {
@@ -12,14 +12,14 @@ function ensureProjects() {
 }
 
 function renderProjects() {
-  const c = eid('progsGrid');
+  const c = eid('projectsGrid');
   c.innerHTML = '';
 
   const projects = ensureProjects();
 
-  const list = progF === 'all'
+  const list = projectF === 'all'
     ? projects
-    : projects.filter(p => (p.status || '') === progF);
+    : projects.filter(p => (p.status || '') === projectF);
 
   if (!list.length) {
     c.innerHTML = `<div style="color:var(--muted);font-size:0.8rem">No projects here yet.</div>`;
@@ -43,14 +43,14 @@ function renderProjects() {
           <input
             class="editable prog-school-inp"
             value="${escapeAttr(title)}"
-            onchange="updatePF(${p.id}, 'school', this.value)"
+            onchange="updateProjectField(${p.id}, 'school', this.value)"
             placeholder="Project title"
           >
 
           <input
             class="editable prog-name-inp"
             value="${escapeAttr(type)}"
-            onchange="updatePF(${p.id}, 'name', this.value)"
+            onchange="updateProjectField(${p.id}, 'name', this.value)"
             placeholder="Type"
           >
 
@@ -71,7 +71,7 @@ function renderProjects() {
           }
         </div>
 
-        <span class="spill s-${status.toLowerCase()}" onclick="cycleStatus(${p.id})" title="Click to change">
+        <span class="spill s-${status.toLowerCase()}" onclick="cycleProjectStatus(${p.id})" title="Click to change">
           ${escapeHtml(status)}
         </span>
       </div>
@@ -79,7 +79,7 @@ function renderProjects() {
       <input
         class="editable prog-name-inp"
         value="${escapeAttr(context)}"
-        onchange="updatePF(${p.id}, 'location', this.value)"
+        onchange="updateProjectField(${p.id}, 'location', this.value)"
         placeholder="Context"
         style="margin-bottom:6px;"
       >
@@ -87,7 +87,7 @@ function renderProjects() {
       <textarea
         class="editable-area prog-notes-inp"
         placeholder="Notes, next steps, sub-focus..."
-        onchange="updatePF(${p.id}, 'notes', this.value)"
+        onchange="updateProjectField(${p.id}, 'notes', this.value)"
         rows="3"
         style="font-size:0.72rem;color:var(--muted);line-height:1.55;"
       >${escapeHtml(notes)}</textarea>
@@ -97,9 +97,9 @@ function renderProjects() {
           class="editable goal-dl-inp"
           type="date"
           value="${escapeAttr(deadline)}"
-          onchange="updatePF(${p.id}, 'deadline', this.value)"
+          onchange="updateProjectField(${p.id}, 'deadline', this.value)"
         >
-        <button class="btn btn-d" style="font-size:0.68rem;padding:3px 9px" onclick="delProg(${p.id})">
+        <button class="btn btn-d" style="font-size:0.68rem;padding:3px 9px" onclick="deleteProject(${p.id})">
           Remove
         </button>
       </div>
@@ -109,18 +109,17 @@ function renderProjects() {
   });
 }
 
-function updatePF(id, field, value) {
+function updateProjectField(id, field, value) {
   const p = ensureProjects().find(x => x.id === id);
   if (!p) return;
-
   p[field] = value;
   scheduleSave();
 }
 
-function setProgF(f, btn) {
-  progF = f;
+function setProjectF(f, btn) {
+  projectF = f;
 
-  const pills = document.querySelectorAll('#progFilters .fpill');
+  const pills = document.querySelectorAll('#projectFilters .fpill');
   pills.forEach(b => b.classList.remove('active'));
 
   if (btn) btn.classList.add('active');
@@ -128,7 +127,7 @@ function setProgF(f, btn) {
   renderProjects();
 }
 
-function cycleStatus(id) {
+function cycleProjectStatus(id) {
   const p = ensureProjects().find(x => x.id === id);
   if (!p) return;
 
@@ -141,7 +140,7 @@ function cycleStatus(id) {
   toast('Status updated');
 }
 
-function delProg(id) {
+function deleteProject(id) {
   if (!confirm('Remove this project?')) return;
 
   S.projects = ensureProjects().filter(x => x.id !== id);
@@ -150,11 +149,11 @@ function delProg(id) {
   renderProjects();
 }
 
-function saveProg() {
+function saveProject() {
   const title = eid('pSchool').value.trim();
   if (!title) return;
 
-  ensureProjects().push({
+  ensureProjects().push(makeProject({
     id: Date.now(),
     school: title,
     name: eid('pName').value.trim(),
@@ -162,17 +161,17 @@ function saveProg() {
     status: eid('pStat').value,
     deadline: eid('pDl').value,
     notes: eid('pNotes').value.trim()
-  });
+  }));
 
   S.programs = S.projects;
-  resetProgModal();
-  closeModal('mProg');
+  resetProjectModal();
+  closeModal('mProject');
   scheduleSave();
   renderProjects();
   toast('Project added');
 }
 
-function resetProgModal() {
+function resetProjectModal() {
   eid('pSchool').value = '';
   eid('pName').value = '';
   eid('pLoc').value = '';
