@@ -617,9 +617,9 @@ main{flex:1; padding:26px 44px 60px;}
   <div id="panel-projects" class="panel">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <div class="sec" style="margin:0">Projects <span class="lbl">Tracks & Focus Areas</span></div>
-      <button class="btn btn-p" onclick="openModal('mProg')">+ Add Project</button>
+      <button class="btn btn-p" onclick="openModal('mProject')">+ Add Project</button>
     </div>
-    <div class="progs-grid" id="progsGrid"></div>
+    <div class="progs-grid" id="projectsGrid"></div>
   </div>
 
   <!-- BOOKS -->
@@ -656,7 +656,7 @@ main{flex:1; padding:26px 44px 60px;}
   <div class="modal-acts"><button class="btn btn-g" onclick="closeModal('mGoal')">Cancel</button><button class="btn btn-p" onclick="saveGoal()">Save</button></div>
 </div></div>
 
-<div class="modal-bg" id="mProg"><div class="modal">
+<div class="modal-bg" id="mProject"><div class="modal">
   <h2>Add Project</h2>
   <div class="mf"><label>Title</label><input id="pSchool" placeholder="e.g. Economics Applications"></div>
   <div class="mf"><label>Type</label><input id="pName" placeholder="e.g. Academic Track"></div>
@@ -664,7 +664,7 @@ main{flex:1; padding:26px 44px 60px;}
   <div class="mf"><label>Status</label><select id="pStat"><option>Wishlist</option><option>Applied</option><option>Pending</option><option>Admitted</option><option>Rejected</option></select></div>
   <div class="mf"><label>Target Date</label><input id="pDl" type="date"></div>
   <div class="mf"><label>Notes</label><textarea id="pNotes" placeholder="What this area is for, key tasks, next steps…"></textarea></div>
-  <div class="modal-acts"><button class="btn btn-g" onclick="closeModal('mProg')">Cancel</button><button class="btn btn-p" onclick="saveProg()">Save</button></div>
+  <div class="modal-acts"><button class="btn btn-g" onclick="closeModal('mProject')">Cancel</button><button class="btn btn-p" onclick="saveProject()">Save</button></div>
 </div></div>
 
 <div class="modal-bg" id="mBook"><div class="modal">
