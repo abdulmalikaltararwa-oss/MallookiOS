@@ -902,7 +902,7 @@ function normalizeAppState(raw={}){
   out.notes = out.notes && typeof out.notes === 'object' ? out.notes : {};
   out.gymLog = out.gymLog && typeof out.gymLog === 'object' ? out.gymLog : {};
   out.cardioLog = out.cardioLog && typeof out.cardioLog === 'object' ? out.cardioLog : {};
-  out.workoutHistory = Array.isArray(out.workoutHistory) ? out.workoutHistory : [];
+  out.workoutHistory = (Array.isArray(out.workoutHistory) ? out.workoutHistory : []).map(makeWorkoutSession);
   out.exerciseHistory = out.exerciseHistory && typeof out.exerciseHistory === 'object' ? out.exerciseHistory : {};
 
   out.habits = (Array.isArray(out.habits) ? out.habits : clone(DS.habits)).map(makeHabit);
@@ -922,7 +922,24 @@ delete out.programs;
 
   return out;
 }
-
+  
+function makeWorkoutSession(s={}){
+  return {
+    id: s.id ?? Date.now() + Math.random(),
+    date: s.date ?? today(),
+    title: s.title ?? 'Workout',
+    cardId: s.cardId ?? null,
+    summary: s.summary ?? '',
+    exercises: Array.isArray(s.exercises)
+      ? s.exercises.map(ex => ({
+          name: ex.name ?? '',
+          sets: ex.sets ?? '',
+          weight: Number.isFinite(+ex.weight) ? +ex.weight : null,
+          reps: Number.isFinite(+ex.reps) ? +ex.reps : null
+        }))
+      : []
+  };
+}
   
 /* ══ HERO ══ */
 function uploadHero(input){
