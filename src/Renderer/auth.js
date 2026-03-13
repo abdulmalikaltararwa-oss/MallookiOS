@@ -62,7 +62,7 @@ async function doAuth() {
   currentUser = res.data.user;
   eid('authScreen').classList.add('hidden');
   eid('userEmail').textContent = currentUser.email;
-  await initApp();
+  await bootApp();
 }
 
 function showAuthMsg(msg, isErr) {
@@ -111,7 +111,7 @@ async function handleAuthDeepLink(url) {
       currentUser = user;
       eid('authScreen').classList.add('hidden');
       eid('userEmail').textContent = currentUser.email;
-      await initApp();
+      await bootApp();
       toast('Signed in successfully');
     }
 
@@ -135,7 +135,7 @@ async function handleAuthDeepLink(url) {
       currentUser = session.user;
       eid('authScreen').classList.add('hidden');
       eid('userEmail').textContent = currentUser.email;
-      await initApp();
+      await bootApp();
       toast('Email confirmed and signed in');
     }
   }
@@ -144,6 +144,7 @@ async function handleAuthDeepLink(url) {
 async function signOut() {
   await sb.auth.signOut();
   currentUser = null;
+  appBooted = false;
   eid('authScreen').classList.remove('hidden');
   eid('authEmail').value = '';
   eid('authPass').value = '';
@@ -164,6 +165,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     currentUser = session.user;
     eid('authScreen').classList.add('hidden');
     eid('userEmail').textContent = currentUser.email;
-    await initApp();
+    await bootApp();
   }
 });
