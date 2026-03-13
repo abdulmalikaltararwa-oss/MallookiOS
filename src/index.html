@@ -871,6 +871,25 @@ function makeBook(b={}){
   };
 }
 
+function makeHabit(h={}){
+  return {
+    id: h.id ?? Date.now() + Math.random(),
+    name: h.name ?? '',
+    days: h.days && typeof h.days === 'object' ? h.days : {}
+  };
+}
+
+function makeGoal(g={}){
+  return {
+    id: g.id ?? Date.now() + Math.random(),
+    text: g.text ?? '',
+    category: g.category ?? 'Personal',
+    deadline: g.deadline ?? '',
+    progress: Number.isFinite(+g.progress) ? Math.max(0, Math.min(100, +g.progress)) : 0,
+    notes: g.notes ?? ''
+  };
+}
+  
 function normalizeAppState(raw={}){
   const src = raw && typeof raw === 'object' ? raw : {};
   const out = deepMerge(DS, src);
@@ -881,11 +900,11 @@ function normalizeAppState(raw={}){
   out.notes = out.notes && typeof out.notes === 'object' ? out.notes : {};
   out.gymLog = out.gymLog && typeof out.gymLog === 'object' ? out.gymLog : {};
   out.cardioLog = out.cardioLog && typeof out.cardioLog === 'object' ? out.cardioLog : {};
-  out.workoutHistory = out.workoutHistory && typeof out.workoutHistory === 'object' ? out.workoutHistory : {};
+  out.workoutHistory = Array.isArray(out.workoutHistory) ? out.workoutHistory : [];
   out.exerciseHistory = out.exerciseHistory && typeof out.exerciseHistory === 'object' ? out.exerciseHistory : {};
 
-  out.habits = Array.isArray(out.habits) ? out.habits : clone(DS.habits);
-  out.goals = Array.isArray(out.goals) ? out.goals : clone(DS.goals);
+  out.habits = (Array.isArray(out.habits) ? out.habits : clone(DS.habits)).map(makeHabit);
+  out.goals = (Array.isArray(out.goals) ? out.goals : clone(DS.goals)).map(makeGoal);
   out.workout = Array.isArray(out.workout) ? out.workout : clone(DS.workout);
   out.workoutCards = Array.isArray(out.workoutCards) ? out.workoutCards : clone(DS.workoutCards);
 
