@@ -62,7 +62,7 @@ async function loadFromSupabase() {
     try {
       const cache = await window.api.cacheLoad();
       if (cache.ok && cache.data) {
-        S = deepMerge(DS, JSON.parse(cache.data));
+        S = normalizeAppState(JSON.parse(cache.data));
         setSyncStatus('offline');
         return true;
       }
@@ -71,7 +71,7 @@ async function loadFromSupabase() {
     return false;
   }
 
-  S = deepMerge(DS, data.data);
+  S = normalizeAppState(data.data);
   setSyncStatus('synced');
   return true;
 }
