@@ -827,16 +827,80 @@ exerciseHistory:{}
 
 };
 
-let S = JSON.parse(JSON.stringify(DS));
+const clone = v => JSON.parse(JSON.stringify(v));
+
+let S = clone(DS);
+let appBooted = false;
+let inlineEditsBound = false;
 
 function deepMerge(base,over){
-  const r=JSON.parse(JSON.stringify(base));
+  const r = clone(base);
+  if(!over || typeof over !== 'object') return r;
   for(const k in over){
-    if(Array.isArray(over[k]))r[k]=over[k];
-    else if(over[k]&&typeof over[k]==='object')r[k]=deepMerge(r[k]||{},over[k]);
-    else r[k]=over[k];
+    if(Array.isArray(over[k])) r[k] = over[k];
+    else if(over[k] && typeof over[k] === 'object') r[k] = deepMerge(r[k] || {}, over[k]);
+    else r[k] = over[k];
   }
   return r;
+}
+
+function makeProject(p={}){
+  return {
+    id: p.id ?? Date.now() + Math.random(),
+    school: p.school ?? '',
+    name: p.name ?? '',
+    location: p.location ?? '',
+    status: p.status ?? 'Pending',
+    deadline: p.deadline ?? '',
+    notes: p.notes ?? ''
+  };
+}
+
+function makeBook(b={}){
+  return {
+    id: b.id ?? Date.now() + Math.random(),
+    title: b.title ?? '',
+    author: b.author ?? '',
+    status: b.status ?? 'unread',
+    rating: b.rating ?? null,
+    notes: b.notes ?? '',
+    coverUrl: b.coverUrl ?? '',
+    currentPage: Number.isFinite(+b.currentPage) ? +b.currentPage : 0,
+    totalPages: Number.isFinite(+b.totalPages) ? +b.totalPages : 0,
+    chapterNotes: Array.isArray(b.chapterNotes) ? b.chapterNotes : []
+  };
+}
+
+function normalizeAppState(raw={}){
+  const src = raw && typeof raw === 'object' ? raw : {};
+  const out = deepMerge(DS, src);
+
+  out.quote = out.quote && typeof out.quote === 'object' ? deepMerge(DS.quote, out.quote) : clone(DS.quote);
+  out.streakPrefs = out.streakPrefs && typeof out.streakPrefs === 'object' ? deepMerge(DS.streakPrefs, out.streakPrefs) : clone(DS.streakPrefs);
+
+  out.notes = out.notes && typeof out.notes === 'object' ? out.notes : {};
+  out.gymLog = out.gymLog && typeof out.gymLog === 'object' ? out.gymLog : {};
+  out.cardioLog = out.cardioLog && typeof out.cardioLog === 'object' ? out.cardioLog : {};
+  out.workoutHistory = out.workoutHistory && typeof out.workoutHistory === 'object' ? out.workoutHistory : {};
+  out.exerciseHistory = out.exerciseHistory && typeof out.exerciseHistory === 'object' ? out.exerciseHistory : {};
+
+  out.habits = Array.isArray(out.habits) ? out.habits : clone(DS.habits);
+  out.goals = Array.isArray(out.goals) ? out.goals : clone(DS.goals);
+  out.workout = Array.isArray(out.workout) ? out.workout : clone(DS.workout);
+  out.workoutCards = Array.isArray(out.workoutCards) ? out.workoutCards : clone(DS.workoutCards);
+
+  const rawProjects =
+    Array.isArray(src.projects) ? src.projects :
+    Array.isArray(src.programs) ? src.programs :
+    Array.isArray(out.projects) ? out.projects :
+    Array.isArray(out.programs) ? out.programs : [];
+
+  out.projects = rawProjects.map(makeProject);
+  out.programs = out.projects;
+
+  out.books = (Array.isArray(out.books) ? out.books : []).map(makeBook);
+
+  return out;
 }
 
   
@@ -868,7 +932,7 @@ function uploadHero(input){
 async function doExport(){const res=await window.api.exportData(JSON.stringify(S,null,2));if(res.ok)toast('Backup exported!');}
 async function doImport(){
   const res=await window.api.importData();if(!res.ok)return;
-  try{S=deepMerge(DS,JSON.parse(res.data));scheduleSave();renderAll();toast('Data imported!');}
+  try{S=normalizeAppState(JSON.parse(res.data));scheduleSave();renderAll();toast('Data imported!');}
   catch(e){alert('Could not read file.');}
 }
 
@@ -909,6 +973,8 @@ function renderAll(){
 
 /* ══ INLINE TITLE EDITING ══ */
 function setupInlineEdits(){
+  if(inlineEditsBound) return;
+  inlineEditsBound = true;
   eid('appTitle').addEventListener('input',e=>{S.appTitle=e.target.textContent;scheduleSave();});
   eid('appSub').addEventListener('input',e=>{S.appSub=e.target.textContent;scheduleSave();});
 }
@@ -919,6 +985,17 @@ async function initApp(){
   eid('dateBadge').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
   setupInlineEdits();
   renderAll();
+}
+
+async function bootApp(){
+  if(appBooted) return;
+  appBooted = true;
+  try{
+    await initApp();
+  }catch(e){
+    appBooted = false;
+    throw e;
+  }
 }
 
 initApp();
