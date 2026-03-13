@@ -3,15 +3,23 @@
 /* ══ PROJECTS / AREAS ══ */
 let progF = 'all';
 
-function renderProgs() {
+function ensureProjects() {
+  if (!Array.isArray(S.projects)) {
+    S.projects = Array.isArray(S.programs) ? S.programs : [];
+  }
+  S.programs = S.projects;
+  return S.projects;
+}
+
+function renderProjects() {
   const c = eid('progsGrid');
   c.innerHTML = '';
 
-  if (!Array.isArray(S.programs)) S.programs = [];
+  const projects = ensureProjects();
 
   const list = progF === 'all'
-    ? S.programs
-    : S.programs.filter(p => (p.status || '') === progF);
+    ? projects
+    : projects.filter(p => (p.status || '') === progF);
 
   if (!list.length) {
     c.innerHTML = `<div style="color:var(--muted);font-size:0.8rem">No projects here yet.</div>`;
@@ -102,7 +110,7 @@ function renderProgs() {
 }
 
 function updatePF(id, field, value) {
-  const p = S.programs.find(x => x.id === id);
+  const p = ensureProjects().find(x => x.id === id);
   if (!p) return;
 
   p[field] = value;
@@ -117,11 +125,11 @@ function setProgF(f, btn) {
 
   if (btn) btn.classList.add('active');
 
-  renderProgs();
+  renderProjects();
 }
 
 function cycleStatus(id) {
-  const p = S.programs.find(x => x.id === id);
+  const p = ensureProjects().find(x => x.id === id);
   if (!p) return;
 
   const statuses = ['Wishlist', 'Applied', 'Pending', 'Admitted', 'Rejected'];
@@ -129,25 +137,24 @@ function cycleStatus(id) {
   p.status = statuses[(current + 1) % statuses.length];
 
   scheduleSave();
-  renderProgs();
+  renderProjects();
   toast('Status updated');
 }
 
 function delProg(id) {
   if (!confirm('Remove this project?')) return;
 
-  S.programs = S.programs.filter(x => x.id !== id);
+  S.projects = ensureProjects().filter(x => x.id !== id);
+  S.programs = S.projects;
   scheduleSave();
-  renderProgs();
+  renderProjects();
 }
 
 function saveProg() {
   const title = eid('pSchool').value.trim();
   if (!title) return;
 
-  if (!Array.isArray(S.programs)) S.programs = [];
-
-  S.programs.push({
+  ensureProjects().push({
     id: Date.now(),
     school: title,
     name: eid('pName').value.trim(),
@@ -157,10 +164,11 @@ function saveProg() {
     notes: eid('pNotes').value.trim()
   });
 
+  S.programs = S.projects;
   resetProgModal();
   closeModal('mProg');
   scheduleSave();
-  renderProgs();
+  renderProjects();
   toast('Project added');
 }
 
